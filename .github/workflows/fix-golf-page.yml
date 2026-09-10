@@ -20,12 +20,19 @@ jobs:
           set -euo pipefail
           mkdir -p assets
           UA='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Safari/537.36'
-          curl -fL --retry 3 -A "$UA" 'https://narusawa.ne.jp/course/img/c_s08.jpg' -o assets/cover-fuji.jpg || \
-            curl -fL --retry 3 -A "$UA" 'https://image.jimcdn.com/app/cms/image/transf/none/path/sad2a693edfa25add/image/i5837fbb702792e41/version/1750730084/image.jpg' -o assets/cover-fuji.jpg
-          curl -fL --retry 3 -A "$UA" 'https://www.hilton.com/im/en/CTSNVHI/3488502/niseko-golf-course.jpg?ch=3000&cw=3942&gravity=NorthWest&impolicy=crop&rh=656&rw=862&xposition=287&yposition=0' -o assets/niseko-village.jpg || \
-            curl -fL --retry 3 -A "$UA" 'https://d111cowwekg815.cloudfront.net/area-guide/32528262837_87a7ff8771_c.jpg' -o assets/niseko-village.jpg
-          test -s assets/cover-fuji.jpg
-          test -s assets/niseko-village.jpg
+          get_image() {
+            local url="$1" out="$2"
+            rm -f "$out"
+            curl -fL --retry 2 -A "$UA" "$url" -o "$out" || return 1
+            [ -s "$out" ] || return 1
+            [ "$(stat -c%s "$out")" -gt 20000 ] || return 1
+            file --brief --mime-type "$out" | grep -q '^image/' || return 1
+          }
+          get_image 'https://narusawa.ne.jp/course/img/c_s08.jpg' assets/cover-fuji.jpg || \
+          get_image 'https://fuji-classic.com/_next/image?url=%2Fimages%2FYczgY0tuDMeruqDJbQ58cZwk.jpg&w=1920&q=90' assets/cover-fuji.jpg || \
+          get_image 'https://image.jimcdn.com/app/cms/image/transf/none/path/sad2a693edfa25add/image/i5837fbb702792e41/version/1750730084/image.jpg' assets/cover-fuji.jpg
+          get_image 'https://www.hilton.com/im/en/CTSNVHI/3488502/niseko-golf-course.jpg?ch=3000&cw=3942&gravity=NorthWest&impolicy=crop&rh=656&rw=862&xposition=287&yposition=0' assets/niseko-village.jpg || \
+          get_image 'https://d111cowwekg815.cloudfront.net/area-guide/32528262837_87a7ff8771_c.jpg' assets/niseko-village.jpg
       - name: Update page
         shell: python
         run: |
@@ -74,48 +81,37 @@ jobs:
               'Ibusuki Golf Course':'https://maps.app.goo.gl/sLJiTQdMf6hme9VP8?g_st=ic',
           }
 
-          handled = set()
-          for title, url in maps.items():
-              pos = text.find(title)
-              if pos < 0:
+          article_re = re.compile(r'<article\b[^>]*class="[^"]*story[^"]*"[^>]*>.*?</article>', re.I|re.S)
+          articles = article_re.findall(text)
+          rebuilt = text
+          for article in articles:
+              title = next((t for t in maps if t in article), None)
+              if not title:
                   continue
-              start = text.rfind('<article', 0, pos)
-              end = text.find('</article>', pos)
-              if start < 0 or end < 0:
-                  continue
-              end += len('</article>')
-              seg = text[start:end]
+              url = maps[title]
               link = f'<a class="map" href="{url}" rel="noopener" target="_blank">Google Maps</a>'
-              if 'class="map"' in seg:
-                  seg = re.sub(r'<a\b[^>]*class="map"[^>]*>.*?</a>', link, seg, count=1, flags=re.I|re.S)
+              if re.search(r'<a\b[^>]*class="map"[^>]*>.*?</a>', article, re.I|re.S):
+                  updated = re.sub(r'<a\b[^>]*class="map"[^>]*>.*?</a>', link, article, count=1, flags=re.I|re.S)
               else:
-                  seg = seg[:-len('</article>')] + link + '</article>'
-              text = text[:start] + seg + text[end:]
-              handled.add(title)
+                  updated = article[:-len('</article>')] + link + '</article>'
+              rebuilt = rebuilt.replace(article, updated, 1)
+          text = rebuilt
 
-          # No course diagrams: only photographic/scenic images remain.
           if re.search(r'<img\b[^>]*(?:map-\d+|course[_-]?map)[^>]*>', text, re.I|re.S):
               raise RuntimeError('A course-map image is still present')
 
-          # Every course article should expose a Google Maps location link.
-          required = [k for k in maps if k != 'Fuji Classic']
-          missing = []
-          for title in required:
-              pos = text.find(title)
-              if pos < 0:
-                  missing.append(title + ' (title)')
-                  continue
-              start = text.rfind('<article', 0, pos)
-              end = text.find('</article>', pos)
-              if start < 0 or end < 0 or 'class="map"' not in text[start:end]:
-                  missing.append(title)
+          course_articles = []
+          for article in article_re.findall(text):
+              if any(t in article for t in maps):
+                  course_articles.append(article)
+          if len(course_articles) < 15:
+              raise RuntimeError(f'Expected at least 15 course articles, found {len(course_articles)}')
+          missing = [a for a in course_articles if 'class="map"' not in a]
           if missing:
-              raise RuntimeError('Missing Google Maps links: ' + ', '.join(missing))
+              raise RuntimeError('A course article is missing its Google Maps link')
 
-          text = text.replace('style.css?v=20260910-final', 'style.css?v=20260910i')
-          text = text.replace('style.css?v=20260910h', 'style.css?v=20260910i')
-          text = text.replace('app.js?v=20260910-final', 'app.js?v=20260910i')
-          text = text.replace('app.js?v=20260910h', 'app.js?v=20260910i')
+          text = re.sub(r'style\.css\?v=[^"\']+', 'style.css?v=20260910j', text)
+          text = re.sub(r'app\.js\?v=[^"\']+', 'app.js?v=20260910j', text)
           p.write_text(text, encoding='utf-8')
       - name: Commit final site and remove one-shot workflow
         shell: bash
@@ -125,5 +121,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
-          git commit -m 'Restore Fuji cover, replace course map with scenery, and verify map links'
+          git commit -m 'Restore Fuji cover and scenic Niseko photo; keep Google Maps links'
           git push
