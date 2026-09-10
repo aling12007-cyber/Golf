@@ -1,0 +1,129 @@
+name: Fix golf page photos and links
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-golf-page.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix-page:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download stable scenic photos
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets
+          UA='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Safari/537.36'
+          curl -fL --retry 3 -A "$UA" 'https://narusawa.ne.jp/course/img/c_s08.jpg' -o assets/cover-fuji.jpg || \
+            curl -fL --retry 3 -A "$UA" 'https://image.jimcdn.com/app/cms/image/transf/none/path/sad2a693edfa25add/image/i5837fbb702792e41/version/1750730084/image.jpg' -o assets/cover-fuji.jpg
+          curl -fL --retry 3 -A "$UA" 'https://www.hilton.com/im/en/CTSNVHI/3488502/niseko-golf-course.jpg?ch=3000&cw=3942&gravity=NorthWest&impolicy=crop&rh=656&rw=862&xposition=287&yposition=0' -o assets/niseko-village.jpg || \
+            curl -fL --retry 3 -A "$UA" 'https://d111cowwekg815.cloudfront.net/area-guide/32528262837_87a7ff8771_c.jpg' -o assets/niseko-village.jpg
+          test -s assets/cover-fuji.jpg
+          test -s assets/niseko-village.jpg
+      - name: Update page
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          p = Path('index.html')
+          text = p.read_text(encoding='utf-8')
+
+          def replace_img_by_alt(text, alt_names, replacement):
+              for alt in alt_names:
+                  pattern = r'<img\b(?=[^>]*\balt="' + re.escape(alt) + r'")[^>]*?/?>'
+                  text, n = re.subn(pattern, replacement, text, count=1, flags=re.I|re.S)
+                  if n:
+                      return text
+              raise RuntimeError('Image not found: ' + ', '.join(alt_names))
+
+          text = replace_img_by_alt(
+              text,
+              ['Golf course in Japan', 'Golf course with Mount Fuji'],
+              '<img alt="Golf course with Mount Fuji" decoding="async" loading="eager" src="assets/cover-fuji.jpg"/>'
+          )
+          text = replace_img_by_alt(
+              text,
+              ['Niseko Village Golf Course'],
+              '<img alt="Niseko Village Golf Course" decoding="async" loading="lazy" src="assets/niseko-village.jpg"/>'
+          )
+          text = text.replace('Access Nature', 'Discover Japan Through Golf')
+
+          maps = {
+              'Niseko Village Golf Course':'https://maps.app.goo.gl/dENEKrjfEG4zBnTS6?g_st=ic',
+              'Furano Golf Course':'https://maps.app.goo.gl/7DKab1PXmPCV7ipx7?g_st=ic',
+              'Gozensui Golf Club':'https://maps.app.goo.gl/snidMaCfEXAZKGq56?g_st=ic',
+              'A-Brand Golf Club':'https://maps.app.goo.gl/ny2mS51XDy3jUjUg9?g_st=ic',
+              'Izumi Kokusai Golf Course':'https://maps.app.goo.gl/ZUFgGDUvWFGfFrHYA?g_st=ic',
+              'Kiyosumi Golf Club':'https://www.google.com/maps/search/?api=1&query=Kiyosumi+Golf+Club+Saitama+Japan',
+              'Kawana Hotel Golf Course':'https://maps.app.goo.gl/KvuepZjoxj3JWZ9G9?g_st=ipc',
+              'Daifuji Golf Course':'https://maps.app.goo.gl/J3nqq6KQBbrVE6cx8?g_st=ic',
+              'Fuji Classic Country Club':'https://maps.app.goo.gl/DCTUv55wFeEzddqL6?g_st=ic',
+              'Fuji Classic':'https://maps.app.goo.gl/DCTUv55wFeEzddqL6?g_st=ic',
+              'Narusawa Golf Club':'https://maps.app.goo.gl/NCewrWQj8nYYUSRL6?g_st=ic',
+              'Seta Golf Course':'https://maps.app.goo.gl/ztnxHqDawsvZ1hDF6?g_st=ic',
+              'Ibaraki Country Club':'https://maps.app.goo.gl/JB8u7ddYY4BzqLUm6?g_st=ic',
+              'Beppu Golf Club':'https://maps.app.goo.gl/qrYnQBwNSjKrtTDo7?g_st=ic',
+              'Phoenix Country Club':'https://maps.app.goo.gl/cCK23Rfwp4Ba2PWn8?g_st=ic',
+              'Ibusuki Golf Course':'https://maps.app.goo.gl/sLJiTQdMf6hme9VP8?g_st=ic',
+          }
+
+          handled = set()
+          for title, url in maps.items():
+              pos = text.find(title)
+              if pos < 0:
+                  continue
+              start = text.rfind('<article', 0, pos)
+              end = text.find('</article>', pos)
+              if start < 0 or end < 0:
+                  continue
+              end += len('</article>')
+              seg = text[start:end]
+              link = f'<a class="map" href="{url}" rel="noopener" target="_blank">Google Maps</a>'
+              if 'class="map"' in seg:
+                  seg = re.sub(r'<a\b[^>]*class="map"[^>]*>.*?</a>', link, seg, count=1, flags=re.I|re.S)
+              else:
+                  seg = seg[:-len('</article>')] + link + '</article>'
+              text = text[:start] + seg + text[end:]
+              handled.add(title)
+
+          # No course diagrams: only photographic/scenic images remain.
+          if re.search(r'<img\b[^>]*(?:map-\d+|course[_-]?map)[^>]*>', text, re.I|re.S):
+              raise RuntimeError('A course-map image is still present')
+
+          # Every course article should expose a Google Maps location link.
+          required = [k for k in maps if k != 'Fuji Classic']
+          missing = []
+          for title in required:
+              pos = text.find(title)
+              if pos < 0:
+                  missing.append(title + ' (title)')
+                  continue
+              start = text.rfind('<article', 0, pos)
+              end = text.find('</article>', pos)
+              if start < 0 or end < 0 or 'class="map"' not in text[start:end]:
+                  missing.append(title)
+          if missing:
+              raise RuntimeError('Missing Google Maps links: ' + ', '.join(missing))
+
+          text = text.replace('style.css?v=20260910-final', 'style.css?v=20260910i')
+          text = text.replace('style.css?v=20260910h', 'style.css?v=20260910i')
+          text = text.replace('app.js?v=20260910-final', 'app.js?v=20260910i')
+          text = text.replace('app.js?v=20260910h', 'app.js?v=20260910i')
+          p.write_text(text, encoding='utf-8')
+      - name: Commit final site and remove one-shot workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/fix-golf-page.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Restore Fuji cover, replace course map with scenery, and verify map links'
+          git push
