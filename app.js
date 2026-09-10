@@ -17,13 +17,23 @@
     'aesthetic-lantern':'stone-lantern'
   };
 
+  // Used only if a supplied image fails to decode or a course has no supplied image.
   const FALLBACK={
     cover:'https://goetheweb.jp/uploads/2024/03/shibafu_43_nishifuji_1.jpg',
+    niseko:'https://d111cowwekg815.cloudfront.net/area-guide/32528262837_87a7ff8771_c.jpg',
     furano:'https://www.princehotels.co.jp/image/2024_4_top200_golf_3.jpg',
     gozensui:'https://www.gozensui-gc.com/course/hole/10/images/movie_img.jpg',
+    abrand:'https://d2d3p98dfsetz4.cloudfront.net/general/_1200x630_crop_center-center_82_none/a-brand-golf-01.jpg?mtime=1690957145',
     izumi:'https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/izumi-international-golf-club_0.jpg',
     kiyosumi:'https://i.gimg.jp/cmsimg/294415.jpg?maxheight=1600&maxwidth=1600',
-    seta:'https://stat.ameba.jp/user_images/20250114/12/ymomoki/d9/86/j/o1080081015533049993.jpg',
+    kawana:'https://static.wixstatic.com/media/eda014_8943335cc7724ee2a50080bf52d1ff38~mv2.jpg/v1/fill/w_1200,h_800,al_c,q_90/eda014_8943335cc7724ee2a50080bf52d1ff38~mv2.jpg',
+    daifuji:'https://www.daifuji-gc.com/course/_img/h01/img_gallery02.jpg',
+    'fuji-classic':'https://stat.ameba.jp/user_images/20250425/08/makotonote/b7/39/j/o1080081015576107700.jpg',
+    narusawa:'https://image.jimcdn.com/app/cms/image/transf/none/path/sad2a693edfa25add/image/i5837fbb702792e41/version/1750730084/image.jpg',
+    seta:'https://www.princehotels.com/en/golf/tournament/asset/img/seta/photo_05.jpg',
+    ibaraki:'https://stat.ameba.jp/user_images/20211126/08/merisuke06/ef/94/j/o0792071815037245486.jpg',
+    beppu:'https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/beppu-golf-club_2.jpg',
+    phoenix:'https://stat.ameba.jp/user_images/20251110/18/golf-platzreife-ch/db/14/j/o1024102415713476146.jpg',
     ibusuki:'https://s3-ap-northeast-1.amazonaws.com/gc.supotomo.com/2015/11/30164203/9213.jpg'
   };
 
@@ -46,55 +56,35 @@
     'Ibusuki Golf Course':'ibusuki'
   };
 
-  const blobCache={};
-  function dataUriToBlobUrl(uri,key){
-    if(!uri||!uri.startsWith('data:')) return uri||'';
-    if(blobCache[key]) return blobCache[key];
-    try{
-      const comma=uri.indexOf(',');
-      if(comma<0) return uri;
-      const head=uri.slice(0,comma);
-      const b64=uri.slice(comma+1);
-      const mime=(head.match(/^data:([^;]+)/)||[])[1]||'image/webp';
-      const binary=atob(b64);
-      const len=binary.length;
-      const bytes=new Uint8Array(len);
-      for(let i=0;i<len;i++) bytes[i]=binary.charCodeAt(i);
-      const url=URL.createObjectURL(new Blob([bytes],{type:mime}));
-      blobCache[key]=url;
-      return url;
-    }catch(e){
-      return uri;
-    }
-  }
-
   function providedSource(key){
     const realKey=PROVIDED_ALIAS[key]||key;
-    const raw=window.PHOTO_DATA[realKey]||'';
-    return raw?dataUriToBlobUrl(raw,realKey):'';
+    return window.PHOTO_DATA[realKey]||'';
   }
-  function sourceFor(key){
-    return providedSource(key)||FALLBACK[key]||'';
-  }
+  function sourceFor(key){ return providedSource(key)||FALLBACK[key]||''; }
+
   function setImage(img,key){
-    const src=sourceFor(key);
+    const supplied=providedSource(key);
+    const fallback=FALLBACK[key]||'';
+    const src=supplied||fallback;
     if(!src)return;
-    img.src=src;
-    img.loading=img.closest('#cover')?'eager':'lazy';
+    img.removeAttribute('width');
+    img.removeAttribute('height');
+    img.loading='eager';
     img.decoding='async';
-    img.classList.add('photo-ready');
+    img.src=src;
     img.onerror=function(){
-      const fallback=FALLBACK[key];
-      if(fallback&&img.src!==fallback){img.onerror=null;img.src=fallback;}
+      if(fallback && this.src!==fallback){
+        this.onerror=null;
+        this.src=fallback;
+      }
     };
   }
 
   const cover=document.querySelector('#cover .cover-image img');
   if(cover){
-    cover.src=FALLBACK.cover;
     cover.loading='eager';
     cover.decoding='async';
-    cover.classList.add('photo-ready');
+    cover.src=FALLBACK.cover;
   }
 
   document.querySelectorAll('img[data-photo]').forEach(function(img){
