@@ -1,0 +1,36 @@
+name: Refresh aesthetic gallery cache
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cache-bust-aesthetic.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Refresh page asset versions
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          p = Path('index.html')
+          text = p.read_text(encoding='utf-8')
+          text = re.sub(r'style\.css\?v=[^"\']+', 'style.css?v=20260910m', text)
+          text = re.sub(r'app\.js\?v=[^"\']+', 'app.js?v=20260910m', text)
+          p.write_text(text, encoding='utf-8')
+      - name: Commit refreshed page
+        shell: bash
+        run: |
+          set -e
+          rm -f .github/workflows/cache-bust-aesthetic.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Show supplied photos in Japan Golf Aesthetic'
+          git push
