@@ -1,0 +1,50 @@
+name: Refresh cover and script cache
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cache-bust-cover.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update page references
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          p = Path('index.html')
+          text = p.read_text(encoding='utf-8')
+
+          text = re.sub(
+              r'<img alt="Golf course with Mount Fuji"[^>]*>',
+              '<img alt="Golf course with Mount Fuji" decoding="async" loading="eager" src="assets/cover-fuji.jpg?v=20260910k"/>',
+              text,
+              count=1,
+              flags=re.I|re.S,
+          )
+          text = re.sub(r'app\.js\?v=[^"\']+', 'app.js?v=20260910k', text)
+
+          if text.count('class="map"') < 15:
+              raise RuntimeError('Google Maps links are missing')
+          if re.search(r'<img\b[^>]*(?:map-\d+|course[_-]?map)[^>]*>', text, re.I|re.S):
+              raise RuntimeError('A course-map image is still present')
+
+          p.write_text(text, encoding='utf-8')
+      - name: Commit refresh and remove one-shot workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/cache-bust-cover.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Refresh Fuji cover and load updated gallery script'
+          git push
