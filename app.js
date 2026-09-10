@@ -95,6 +95,7 @@
   function installFallback(img,candidates,finalLocal){
     if(!img)return;
     img.removeAttribute('onerror');
+    img.style.display='block';
     const original=img.getAttribute('src');
     const chain=uniq([original].concat(candidates||[],[finalLocal||LOCAL.generic]));
     let index=Math.max(0,chain.indexOf(original));
@@ -103,14 +104,17 @@
     function loaded(){
       if(finished)return;
       finished=true;
+      img.style.display='block';
       if(img.src.indexOf('assets/')!==-1)img.classList.add('image-fallback');
       markReady(img);
     }
 
     function next(){
       finished=false;
+      img.style.display='block';
       index+=1;
       if(index>=chain.length){
+        img.onerror=null;
         img.src=LOCAL.generic;
         img.classList.add('image-fallback');
         markReady(img);
@@ -121,7 +125,10 @@
 
     img.addEventListener('load',loaded);
     img.addEventListener('error',next);
-    if(img.complete&&img.naturalWidth>0)loaded();
+    if(img.complete){
+      if(img.naturalWidth>0)loaded();
+      else next();
+    }
   }
 
   const cover=document.querySelector('#cover .cover-image img');
