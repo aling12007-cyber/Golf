@@ -1,7 +1,7 @@
 (function(){
   const cover=document.querySelector('#cover .cover-image img');
   if(cover){
-    cover.src='assets/cover-fuji.jpg?v=20260910k';
+    cover.src='assets/cover-fuji.jpg?v=20260910m';
     cover.alt='Golf course with Mount Fuji';
     cover.removeAttribute('data-fallback');
     cover.loading='eager';
@@ -16,16 +16,16 @@
   document.querySelectorAll('img[alt="Fuji Classic Country Club"]').forEach(function(img){img.alt='Fuji Classic';});
 
   const aesthetic=document.querySelector('#aesthetic .aesthetic-editorial');
-  if(aesthetic&&!aesthetic.querySelector('.aesthetic-stack')){
+  if(aesthetic){
+    const old=aesthetic.querySelector('.aesthetic-stack');
+    if(old)old.remove();
     const gallery=document.createElement('div');
     gallery.className='aesthetic-stack';
     const photos=[
-      ['Meticulous bunker care','https://www.baroness-direct.com/mame/drbaroness/0000000370/gotenba32.jpg','https://a-us.storyblok.com/f/1022273/1408x768/4554d707f9/gemini_generated_image_mj1ei0mj1ei0mj1e.png/m/1408x768/filters%3Aquality%2885%29'],
-      ['Clubhouse dining','https://ximg.retty.me/crop/s1200x900/-/retty/img_repo/2l/01/37028375.jpg','https://stat.ameba.jp/user_images/20250109/18/heizoblack/31/96/j/o2000150015531323570.jpg'],
-      ['Japanese bath','https://img.goo-net.com/sss/magazine/2024/01/18/1705562921.jpg','https://pix10.agoda.net/hotelImages/9071866/0/b112834f09da7f72e6b70a82db9c2b1a.jpg?ce=0&s=1024x768'],
-      ['Traditional landscape detail','https://cdn.jeepe.jp/uploads/public_image/image/2704/normal_3950183d-def3-493f-82b5-4a73fd81a6ee.jpg','https://livedoor.blogimg.jp/spiderqv/imgs/b/a/ba286207.jpg'],
-      ['Golf beneath Mount Fuji','https://www.daifuji-gc.com/course/_img/h01/img_gallery01.jpg','https://www.daifuji-gc.com/course/_img/h01/img_gallery02.jpg'],
-      ['Coastal golf landscape','https://www.princehotels.co.jp/golf/kawana/fuji/course/images_static/pct-hole15-01.jpg','https://static.wixstatic.com/media/eda014_8943335cc7724ee2a50080bf52d1ff38~mv2.jpg/v1/fill/w_1200,h_800,al_c,q_90/eda014_8943335cc7724ee2a50080bf52d1ff38~mv2.jpg']
+      ['Meticulous bunker care','assets/aesthetic-bunker.jpg?v=20260910m'],
+      ['Clubhouse dining','assets/aesthetic-meal.jpg?v=20260910m'],
+      ['Japanese bath','assets/aesthetic-bath.jpg?v=20260910m'],
+      ['Traditional landscape detail','assets/aesthetic-lantern.jpg?v=20260910m']
     ];
     photos.forEach(function(item){
       const fig=document.createElement('figure');
@@ -34,11 +34,6 @@
       img.src=item[1];
       img.loading='lazy';
       img.decoding='async';
-      img.referrerPolicy='no-referrer';
-      img.dataset.fallback=item[2];
-      img.onerror=function(){
-        if(this.dataset.fallback){const f=this.dataset.fallback;this.dataset.fallback='';this.src=f;}else{this.style.display='none';}
-      };
       fig.appendChild(img);
       gallery.appendChild(fig);
     });
@@ -65,7 +60,8 @@
     if(index===current)return;
     current=index;
     tabs.forEach(function(a,i){a.classList.toggle('active',i===index);});
-    const active=tabs[index];if(active)active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+    const active=tabs[index];
+    if(active)active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
   }
   function onScroll(){if(!ticking){requestAnimationFrame(sync);ticking=true;}}
   window.addEventListener('scroll',onScroll,{passive:true});
