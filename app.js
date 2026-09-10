@@ -22,7 +22,7 @@
     furano:'https://www.princehotels.co.jp/image/2024_4_top200_golf_3.jpg',
     gozensui:'https://www.gozensui-gc.com/course/hole/10/images/movie_img.jpg',
     izumi:'https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/izumi-international-golf-club_0.jpg',
-    kiyosumi:'https://i.gimg.jp/cmsimg/294415.jpg?maxheight=1200&maxwidth=1200',
+    kiyosumi:'https://i.gimg.jp/cmsimg/294415.jpg?maxheight=1600&maxwidth=1600',
     seta:'https://stat.ameba.jp/user_images/20250114/12/ymomoki/d9/86/j/o1080081015533049993.jpg',
     ibusuki:'https://s3-ap-northeast-1.amazonaws.com/gc.supotomo.com/2015/11/30164203/9213.jpg'
   };
@@ -46,9 +46,32 @@
     'Ibusuki Golf Course':'ibusuki'
   };
 
+  const blobCache={};
+  function dataUriToBlobUrl(uri,key){
+    if(!uri||!uri.startsWith('data:')) return uri||'';
+    if(blobCache[key]) return blobCache[key];
+    try{
+      const comma=uri.indexOf(',');
+      if(comma<0) return uri;
+      const head=uri.slice(0,comma);
+      const b64=uri.slice(comma+1);
+      const mime=(head.match(/^data:([^;]+)/)||[])[1]||'image/webp';
+      const binary=atob(b64);
+      const len=binary.length;
+      const bytes=new Uint8Array(len);
+      for(let i=0;i<len;i++) bytes[i]=binary.charCodeAt(i);
+      const url=URL.createObjectURL(new Blob([bytes],{type:mime}));
+      blobCache[key]=url;
+      return url;
+    }catch(e){
+      return uri;
+    }
+  }
+
   function providedSource(key){
     const realKey=PROVIDED_ALIAS[key]||key;
-    return window.PHOTO_DATA[realKey]||'';
+    const raw=window.PHOTO_DATA[realKey]||'';
+    return raw?dataUriToBlobUrl(raw,realKey):'';
   }
   function sourceFor(key){
     return providedSource(key)||FALLBACK[key]||'';
@@ -59,6 +82,11 @@
     img.src=src;
     img.loading=img.closest('#cover')?'eager':'lazy';
     img.decoding='async';
+    img.classList.add('photo-ready');
+    img.onerror=function(){
+      const fallback=FALLBACK[key];
+      if(fallback&&img.src!==fallback){img.onerror=null;img.src=fallback;}
+    };
   }
 
   const cover=document.querySelector('#cover .cover-image img');
@@ -66,6 +94,7 @@
     cover.src=FALLBACK.cover;
     cover.loading='eager';
     cover.decoding='async';
+    cover.classList.add('photo-ready');
   }
 
   document.querySelectorAll('img[data-photo]').forEach(function(img){
@@ -78,8 +107,8 @@
     if(!titleEl)return;
     let title=titleEl.textContent.trim();
     if(title==='Gozensui Golf Club p'){
+      titleEl.textContent='Gozensui Golf Club';
       title='Gozensui Golf Club';
-      titleEl.textContent=title;
     }
     const key=COURSE_MAP[title];
     if(!key)return;
@@ -90,14 +119,13 @@
       img=document.createElement('img');
       img.alt=title;
       wrap.appendChild(img);
-      const pref=card.querySelector('.pref');
-      if(pref)card.insertBefore(wrap,pref); else card.insertBefore(wrap,card.firstChild);
+      card.insertBefore(wrap,card.firstChild);
     }
     setImage(img,key);
   });
 
   const menuBtn=document.getElementById('menuBtn'),moreBtn=document.getElementById('moreBtn'),menu=document.getElementById('menuPanel'),more=document.getElementById('morePanel');
-  function close(){menu&&menu.classList.remove('open');more&&more.classList.remove('open');}
+  function close(){if(menu)menu.classList.remove('open');if(more)more.classList.remove('open');}
   if(menuBtn&&moreBtn&&menu&&more){
     menuBtn.addEventListener('click',function(e){e.stopPropagation();more.classList.remove('open');menu.classList.toggle('open');});
     moreBtn.addEventListener('click',function(e){e.stopPropagation();menu.classList.remove('open');more.classList.toggle('open');});
