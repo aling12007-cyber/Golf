@@ -1,4 +1,9 @@
 (function(){
+ window.PHOTO_DATA=window.PHOTO_DATA||{};
+ if(window.PHOTO_DATA['traditional-bunker']&&!window.PHOTO_DATA['aesthetic-bunker'])window.PHOTO_DATA['aesthetic-bunker']=window.PHOTO_DATA['traditional-bunker'];
+ if(window.PHOTO_DATA['clubhouse-meal']&&!window.PHOTO_DATA['aesthetic-meal'])window.PHOTO_DATA['aesthetic-meal']=window.PHOTO_DATA['clubhouse-meal'];
+ if(window.PHOTO_DATA['onsen']&&!window.PHOTO_DATA['aesthetic-bath'])window.PHOTO_DATA['aesthetic-bath']=window.PHOTO_DATA['onsen'];
+ if(window.PHOTO_DATA['stone-lantern']&&!window.PHOTO_DATA['aesthetic-lantern'])window.PHOTO_DATA['aesthetic-lantern']=window.PHOTO_DATA['stone-lantern'];
  document.querySelectorAll('[data-photo]').forEach(function(el){var k=el.getAttribute('data-photo');if(window.PHOTO_DATA&&window.PHOTO_DATA[k])el.src=window.PHOTO_DATA[k]});
  var menuBtn=document.getElementById('menuBtn'),moreBtn=document.getElementById('moreBtn'),menu=document.getElementById('menuPanel'),more=document.getElementById('morePanel');
  function close(){menu.classList.remove('open');more.classList.remove('open')}
