@@ -83,6 +83,14 @@
       fig.appendChild(img);gallery.appendChild(fig);
     });
     aesthetic.appendChild(gallery);
+
+    const bunker=gallery.querySelector('img');
+    if(bunker){
+      fetch('assets/aesthetic-bunker-small.jpg.b64.txt?v=20260911e',{cache:'no-store'})
+        .then(function(r){if(!r.ok)throw new Error('bunker payload');return r.text();})
+        .then(function(b64){bunker.src='data:image/jpeg;base64,'+b64.trim();bunker.removeAttribute('loading');})
+        .catch(function(){});
+    }
   }
 
   const cover=document.querySelector('#cover .cover-image img');
