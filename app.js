@@ -72,7 +72,7 @@
     const gallery=document.createElement('div');
     gallery.className='aesthetic-stack';
     [
-      ['Meticulous bunker care','assets/aesthetic-bunker.jpg?v=20260910n'],
+      ['Meticulous bunker care','assets/aesthetic-bunker.jpg?v=20260911a'],
       ['Clubhouse dining','assets/aesthetic-meal.jpg?v=20260910n'],
       ['Japanese bath','assets/aesthetic-bath.jpg?v=20260910n'],
       ['Traditional landscape detail','assets/aesthetic-lantern.jpg?v=20260910n']
