@@ -1,0 +1,1 @@
+Binary course photos are added in the next commit.
