@@ -3,7 +3,7 @@
     niseko:'https://d111cowwekg815.cloudfront.net/area-guide/32528262837_87a7ff8771_c.jpg',
     abrand:'https://d2d3p98dfsetz4.cloudfront.net/general/_1200x630_crop_center-center_82_none/a-brand-golf-01.jpg?mtime=1690957145',
     furano:'https://www.princehotels.co.jp/golf/furano/tomonokai/images_static/pct-golf_member04.jpg',
-    gozensui:'https://golf-pass.brightspotcdn.com/55/c9/aed7e1d0c39e5c4c488c9afbdcb1/118068.jpg',
+    gozensui:'https://golf-pass.brightspotcdn.com/55/c9/aed7e1d0c39c488c9afbdcb1/118068.jpg',
     izumi:'https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/izumi-international-golf-club_0.jpg',
     kiyosumi:'https://d1uzk9o9cg136f.cloudfront.net/f/16783386/rc/2021/04/20/f89388efa114e2322d320912a9db9a9d92fdf9a7_xlarge.jpg',
     kawana:'https://static.wixstatic.com/media/eda014_8943335cc7724ee2a50080bf52d1ff38~mv2.jpg/v1/fill/w_800%2Ch_533%2Cal_c/eda014_8943335cc7724ee2a50080bf52d1ff38~mv2.jpg',
@@ -46,7 +46,10 @@
     }
   });
   document.querySelectorAll('article.course').forEach(card=>{
-    const h=card.querySelector('h3');if(!h)return;const key=COURSE[h.textContent.trim()];if(!key)return;
+    const h=card.querySelector('h3');if(!h)return;
+    const original=h.textContent.trim();
+    if(original==='Gozensui Golf Club p')h.textContent='Gozensui Golf Club';
+    const key=COURSE[original]||COURSE[h.textContent.trim()];if(!key)return;
     let img=card.querySelector('.course-photo img');
     if(!img){const wrap=document.createElement('div');wrap.className='course-photo';img=document.createElement('img');img.alt=h.textContent.trim();wrap.appendChild(img);card.insertBefore(wrap,card.firstChild);}
     setImg(img,key);
