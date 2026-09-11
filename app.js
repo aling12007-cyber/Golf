@@ -56,11 +56,26 @@
     ]
   };
 
+  const CHAPTER_LABELS={
+    cover:'Cover Page',
+    hokkaido:'Hokkaido',
+    miyagi:'Miyagi',
+    saitama:'Saitama',
+    shizuoka:'Shizuoka',
+    yamanashi:'Yamanashi',
+    kyoto:'Kyoto',
+    osaka:'Osaka',
+    oita:'Oita',
+    miyazaki:'Miyazaki',
+    kagoshima:'Kagoshima',
+    aesthetic:'Japan Golf Aesthetic'
+  };
+
   function loadFallback(img,sources,onFail){
     const queue=unique(sources);
     let i=0;
     const next=()=>{
-      if(i>=queue.length){ if(onFail)onFail(); return; }
+      if(i>=queue.length){if(onFail)onFail();return;}
       img.onerror=next;
       img.onload=()=>img.classList.add('is-ready');
       img.src=queue[i++];
@@ -168,7 +183,7 @@
     if(!btn||!panel)return;
 
     panel.innerHTML='<div class="menu-title">All Chapters</div>'+$$('.chapter').map(section=>{
-      const label=section.id==='cover'?'Cover Page':section.id==='aesthetic'?'Japan Golf Aesthetic':section.id.charAt(0).toUpperCase()+section.id.slice(1);
+      const label=CHAPTER_LABELS[section.id]||section.id;
       return '<a href="#'+section.id+'">'+label+'</a>';
     }).join('');
 
@@ -199,17 +214,80 @@
     });
   }
 
-  function setupActiveMenu(){
+  function setupMobileChapterStrip(){
+    const shell=$('.sticky-shell');
     const sections=$$('.chapter');
-    const links=()=>$$('#menuPanel a');
+    if(!shell||!sections.length)return;
+
+    const nav=document.createElement('nav');
+    nav.className='mobile-chapter-strip';
+    nav.setAttribute('aria-label','Chapters');
+    nav.innerHTML=sections.map(section=>{
+      const label=CHAPTER_LABELS[section.id]||section.id;
+      return '<a href="#'+section.id+'">'+label+'</a>';
+    }).join('');
+    shell.appendChild(nav);
+
+    const style=document.createElement('style');
+    style.textContent=`
+      .mobile-chapter-strip{display:none}
+      @media(max-width:900px){
+        :root{--chapter-strip:68px}
+        .sticky-shell{height:calc(var(--bar) + var(--chapter-strip));overflow:visible}
+        .mobile-chapter-strip{display:flex;height:var(--chapter-strip);align-items:center;gap:52px;padding:0 28px;background:#fff;border-top:1px solid #efeeeb;border-bottom:1px solid #e8e7e3;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+        .mobile-chapter-strip::-webkit-scrollbar{display:none}
+        .mobile-chapter-strip a{flex:0 0 auto;text-decoration:none;color:#d3d1ce;font-family:var(--serif);font-size:27px;font-weight:700;line-height:1;letter-spacing:.01em;transition:color .18s ease}
+        .mobile-chapter-strip a.active{color:#33312e}
+        .cover-image{margin-top:calc(var(--bar) + var(--chapter-strip))}
+        .chapter{scroll-margin-top:calc(var(--bar) + var(--chapter-strip))}
+      }
+      @media(max-width:560px){
+        :root{--chapter-strip:64px}
+        .mobile-chapter-strip{gap:44px;padding:0 24px}
+        .mobile-chapter-strip a{font-size:25px}
+      }
+    `;
+    document.head.appendChild(style);
+
+    nav.addEventListener('click',e=>{
+      const link=e.target.closest('a');
+      if(!link)return;
+      const target=$(link.getAttribute('href'));
+      if(!target)return;
+      e.preventDefault();
+      const css=getComputedStyle(document.documentElement);
+      const bar=parseFloat(css.getPropertyValue('--bar'))||0;
+      const strip=parseFloat(css.getPropertyValue('--chapter-strip'))||0;
+      window.scrollTo({top:Math.max(0,target.offsetTop-bar-strip+1),behavior:'smooth'});
+    });
+  }
+
+  function setupNavigationState(){
+    const sections=$$('.chapter');
     let ticking=false;
+    let last='';
+
     const sync=()=>{
       ticking=false;
       const y=scrollY+innerHeight*.42;
       let current=sections[0]?.id||'';
-      sections.forEach(s=>{if(s.offsetTop<=y)current=s.id;});
-      links().forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+current));
+      sections.forEach(section=>{if(section.offsetTop<=y)current=section.id;});
+
+      $$('#menuPanel a,.mobile-chapter-strip a').forEach(link=>{
+        link.classList.toggle('active',link.getAttribute('href')==='#'+current);
+      });
+
+      if(current!==last){
+        last=current;
+        const nav=$('.mobile-chapter-strip');
+        const active=$('.mobile-chapter-strip a.active');
+        if(nav&&active&&innerWidth<=900){
+          const left=active.offsetLeft-(nav.clientWidth-active.clientWidth)/2;
+          nav.scrollTo({left:Math.max(0,left),behavior:'smooth'});
+        }
+      }
     };
+
     addEventListener('scroll',()=>{
       if(ticking)return;
       ticking=true;
@@ -224,5 +302,6 @@
   setupAestheticHero();
   setupMenu();
   setupActions();
-  setupActiveMenu();
+  setupMobileChapterStrip();
+  setupNavigationState();
 })();
