@@ -10,6 +10,7 @@
     generic:'assets/cover-fuji.jpg',
     aesthetic:'assets/aesthetic-bunker.jpg'
   };
+
   const HERO={
     hokkaido:['https://www.visit-hokkaido.jp/lsc/upfile/spot/0001/3097/13097_1_l.jpg','https://www.visit-hokkaido.jp/lsc/upfile/spot/0001/3097/13097_3_l.jpg',LOCAL.hokkaido],
     miyagi:['https://i.gimg.jp/resource/reserve/gstart/gcimg/230202/20240930-34.jpg?w=1200','https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/izumi-international-golf-club_0.jpg',LOCAL.generic],
@@ -22,6 +23,24 @@
     miyazaki:['https://www.kanko-miyazaki.jp/storage/tourism_attractions/1271/responsive_images/X39EA0gDkUYBWNtMH3vSlYjv04kLQR0w5XsvuA5h__1581_1054.jpg','https://stat.ameba.jp/user_images/20251110/18/golf-platzreife-ch/db/14/j/o1024102415713476146.jpg',LOCAL.generic],
     kagoshima:['https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/ibusuki-golf-club_3.jpg','https://d1uzk9o9cg136f.cloudfront.net/f/16783386/rc/2020/01/14/d74450ecdfbb6139dd5574c7d4f580958db70aaf_large.jpg',LOCAL.generic],
     aesthetic:['https://www.golfsavers.com/assets/image/Golf-in-Japan-1.jpg',LOCAL.aesthetic,LOCAL.generic]
+  };
+
+  const ARTICLE_IMAGES={
+    'Niseko Village Golf Course':['assets/niseko-village.jpg',LOCAL.hokkaido,LOCAL.generic],
+    'Furano Golf Course':['https://www.princehotels.co.jp/golf/furano/course/images_static/pct-hole15-01-01.jpg','https://www.princehotels.co.jp/image/2026_03_lv1_golf_1.jpg',LOCAL.hokkaido],
+    'Gozensui Golf Club':['https://golf-pass.brightspotcdn.com/55/c9/aed7e1d0c39c488c9afbdcb1/118068.jpg','https://www.gozensui-gc.com/course/hole/11/images/movie_img.jpg',LOCAL.hokkaido],
+    'A-Brand Golf Club':['https://www.visit-hokkaido.jp/lsc/upfile/spot/0001/3097/13097_3_l.jpg','https://www.visit-hokkaido.jp/lsc/upfile/spot/0001/3097/13097_1_l.jpg',LOCAL.hokkaido],
+    'Izumi Kokusai Golf Course':['https://i.gimg.jp/resource/reserve/gstart/gcimg/230202/20240930-34.jpg?w=1200','https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/izumi-international-golf-club_0.jpg',LOCAL.generic],
+    'Kiyosumi Golf Club':['https://www.kiyosumi-golf.co.jp/cms/wp-content/themes/theme-kiyosumi/images/img-index-course.jpg','https://image.gora.golf.rakuten.co.jp/img/golf/110020/img/c0/001.jpg',LOCAL.generic],
+    'Kawana Hotel Golf Course':['https://www.princehotels.co.jp/golf/kawana/fuji/course/images_static/pct-hole15-01.jpg','https://www.princehotels.co.jp/golf/kawana/fuji/course/images_static/pct-hole01-05.jpg',LOCAL.generic],
+    'Daifuji Golf Course':['https://www.daifuji-gc.com/course/_img/h01/img_gallery02.jpg','https://www.daifuji-gc.com/course/_img/h01/img_gallery01.jpg',LOCAL.generic],
+    'Fuji Classic':['https://fuji-classic.com/_next/image?url=%2Fimages%2Frj99obGXlII0ZAtVf3rVl0s1g.jpg&w=1920&q=85','https://image.jimcdn.com/app/cms/image/transf/none/path/sad2a693edfa25add/image/i5837fbb702792e41/version/1750730084/image.jpg',LOCAL.generic],
+    'Narusawa Golf Club':['https://image.jimcdn.com/app/cms/image/transf/none/path/sad2a693edfa25add/image/i5837fbb702792e41/version/1750730084/image.jpg',LOCAL.generic],
+    'Seta Golf Course':['https://www.princehotels.com/en/golf/tournament/asset/img/seta/photo_05.jpg','https://www.asiaodysseytravel.com/images/asia-tours/japan-tours/seta-golf-club-700-4.jpg',LOCAL.generic],
+    'Ibaraki Country Club':['https://stat.ameba.jp/user_images/20211126/08/merisuke06/ef/94/j/o0792071815037245486.jpg','https://media.triple.guide/triple-cms/c_limit,f_auto,h_2048,w_2048/2e21a769-ced1-42dd-a4f5-16642dc097ad.jpeg',LOCAL.generic],
+    'Beppu Golf Club':['https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/beppu-golf-club_2.jpg','https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/beppu-golf-club_0.jpg',LOCAL.generic],
+    'Phoenix Country Club':['https://www.kanko-miyazaki.jp/storage/tourism_attractions/1271/responsive_images/X39EA0gDkUYBWNtMH3vSlYjv04kLQR0w5XsvuA5h__1581_1054.jpg','https://stat.ameba.jp/user_images/20251110/18/golf-platzreife-ch/db/14/j/o1024102415713476146.jpg',LOCAL.generic],
+    'Ibusuki Golf Course':['https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/ibusuki-golf-club_3.jpg','https://d1uzk9o9cg136f.cloudfront.net/f/16783386/rc/2020/01/14/d74450ecdfbb6139dd5574c7d4f580958db70aaf_large.jpg',LOCAL.generic]
   };
 
   function loadChain(img,list){
@@ -77,14 +96,46 @@
     }
   }
 
+  function articleSources(title,sectionId){
+    return ARTICLE_IMAGES[title]||HERO[sectionId]||[LOCAL.generic];
+  }
+
+  function ensurePhotoAfter(article,sectionId){
+    const title=$('h3',article)?.textContent.trim()||'';
+    const sources=articleSources(title,sectionId);
+    const editorial=article.parentElement;
+    let photo=$$('.story-photo',editorial).find(fig=>($('img',fig)?.alt||'').trim()===title)||null;
+
+    if(!photo){
+      photo=document.createElement('figure');
+      photo.className='story-photo';
+      photo.innerHTML='<img alt="'+title.replace(/"/g,'&quot;')+'" decoding="async" loading="lazy"><figcaption>'+title+'</figcaption>';
+    }else{
+      let cap=$('figcaption',photo);
+      if(!cap){cap=document.createElement('figcaption');photo.appendChild(cap);}
+      cap.textContent=title;
+    }
+
+    article.after(photo);
+    const img=$('img',photo);
+    if(img){
+      img.alt=title;
+      img.loading='lazy';
+      img.decoding='async';
+      img.referrerPolicy='no-referrer';
+      if(!img.getAttribute('src'))img.setAttribute('src',sources[0]);
+      img.dataset.sources=JSON.stringify(sources);
+    }
+  }
+
   function prepareEditorial(){
     $$('.chapter.region,.chapter.aesthetic').forEach(section=>{
       const editorial=$('.editorial',section);
       if(!editorial)return;
-      $$('.story-photo',editorial).forEach(n=>n.remove());
       $$('.aesthetic-stack',editorial).forEach(n=>n.remove());
       const intro=$('.chapter-intro',editorial);
       if(intro)intro.remove();
+      $$('.story',editorial).forEach(article=>ensurePhotoAfter(article,section.id));
       if($('.editorial-inner',editorial))return;
       const wrap=document.createElement('div');
       wrap.className='editorial-inner';
@@ -96,6 +147,11 @@
   function images(){
     loadChain($('#cover .cover-image img'),[LOCAL.cover]);
     $$('.chapter.region,.chapter.aesthetic').forEach(s=>loadChain($('.chapter-hero img',s),HERO[s.id]||[]));
+    $$('.story-photo img').forEach(img=>{
+      let list=[];
+      try{list=JSON.parse(img.dataset.sources||'[]');}catch(_){list=[];}
+      loadChain(img,list);
+    });
   }
 
   function menu(){
@@ -107,14 +163,14 @@
   }
 
   function active(){
-    const sections=$$('.chapter'), links=$$('a[href^="#"]');
+    const sections=$$('.chapter'),links=$$('a[href^="#"]');
     let current='cover';
     function sync(){
       const y=scrollY+innerHeight*.42;
       sections.forEach(s=>{if(s.offsetTop<=y)current=s.id;});
       links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+current));
     }
-    addEventListener('scroll',sync,{passive:true}); addEventListener('resize',sync); sync();
+    addEventListener('scroll',sync,{passive:true});addEventListener('resize',sync);sync();
   }
 
   buildToolbar();
