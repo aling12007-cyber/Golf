@@ -152,7 +152,7 @@
         .overview-sticky-title .overview-subtitle{margin-bottom:0}
         .aesthetic-sticky-title{margin-bottom:22px}
         @media(max-width:900px){
-          .sticky-title-block{top:calc(var(--bar) + var(--chapter-strip,40px))}
+          .sticky-title-block{position:static;top:auto;backdrop-filter:none;-webkit-backdrop-filter:none}
         }
         @media(max-width:560px){
           .story{margin-bottom:46px}
