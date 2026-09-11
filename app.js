@@ -73,25 +73,22 @@
       imgBox.insertAdjacentHTML('beforeend','<div class="cover-byline">— Curated Golf Guide</div><div class="cover-subtitle">Discover Japan<br>Through Golf</div>');
     }
     if(right){
-      right.innerHTML='<div class="panel-arrow-wrap"><a class="down-arrow" href="#hokkaido" aria-label="Continue"></a></div><div class="cover-intro"><div class="cover-kicker">Japan Golf Itineraries</div><h2>A Guide to Japan’s Signature Golf Destinations</h2><div class="intro-rule"></div><p>From Hokkaido’s open fairways to Mount Fuji panoramas, classic Pacific coast courses and the refined clubs of Kansai, this guide brings together distinctive golf experiences across Japan.</p><p>Scroll to move through each region. The image on the left stays full-screen while the story changes on the right.</p></div>';
+      right.innerHTML='<div class="cover-intro"><div class="cover-kicker">Japan Golf Itineraries</div><h2>A Guide to Japan’s Signature Golf Destinations</h2><div class="intro-rule"></div><p>From Hokkaido’s open fairways to Mount Fuji panoramas, classic Pacific coast courses and the refined clubs of Kansai, this guide brings together distinctive golf experiences across Japan.</p><p>Scroll to move through each region. The image on the left stays full-screen while the story changes on the right.</p></div>';
     }
   }
 
-  function chapterIntros(){
+  function prepareEditorial(){
     $$('.chapter.region,.chapter.aesthetic').forEach(section=>{
-      const editorial=$('.editorial',section), overlay=$('.hero-overlay',section);
-      if(!editorial||!overlay)return;
+      const editorial=$('.editorial',section);
+      if(!editorial)return;
       $$('.story-photo',editorial).forEach(n=>n.remove());
       $$('.aesthetic-stack',editorial).forEach(n=>n.remove());
-      if($('.chapter-intro',editorial))return;
-      const label=($('em',overlay)?.textContent||'Explore Japan').replace(/^—\s*/, '').trim();
-      const intro=document.createElement('div');
-      intro.className='chapter-intro';
-      intro.innerHTML='<div class="chapter-cue-label">'+label+'</div><div class="chapter-cue-title"></div><div class="chapter-cue-arrow" aria-hidden="true"></div>';
-      editorial.prepend(intro);
+      const intro=$('.chapter-intro',editorial);
+      if(intro)intro.remove();
+      if($('.editorial-inner',editorial))return;
       const wrap=document.createElement('div');
       wrap.className='editorial-inner';
-      Array.from(editorial.childNodes).forEach(n=>{if(n!==intro)wrap.appendChild(n);});
+      Array.from(editorial.childNodes).forEach(n=>wrap.appendChild(n));
       editorial.appendChild(wrap);
     });
   }
@@ -123,7 +120,7 @@
   buildToolbar();
   rebuildMenu();
   buildCover();
-  chapterIntros();
+  prepareEditorial();
   images();
   menu();
   active();
