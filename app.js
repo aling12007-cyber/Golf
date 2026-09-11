@@ -27,7 +27,7 @@
   };
 
   const ARTICLE_IMAGES={
-    'Niseko Village Golf Course':['assets/niseko-village.jpg'],
+    'Niseko Village Golf Course':['https://d111cowwekg815.cloudfront.net/area-guide/32528262837_87a7ff8771_c.jpg','https://www.vivid-golf.com/info/img/hokkaido/05_niseko/gallary_19.jpg'],
     'Furano Golf Course':['https://www.princehotels.co.jp/golf/furano/course/images_static/pct-hole15-01-01.jpg','https://www.princehotels.co.jp/image/2026_03_lv1_golf_1.jpg'],
     'Gozensui Golf Club':['https://golf-pass.brightspotcdn.com/55/c9/aed7e1d0c39c488c9afbdcb1/118068.jpg','https://www.gozensui-gc.com/course/hole/11/images/movie_img.jpg'],
     'A-Brand Golf Club':['https://d2d3p98dfsetz4.cloudfront.net/general/_1200x630_crop_center-center_82_none/a-brand-golf-01.jpg?mtime=1690957145'],
