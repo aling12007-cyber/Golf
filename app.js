@@ -35,11 +35,10 @@
       'https://zuien.net/wp-content/themes/zuien/src/images/narusawa/coursegide/out/course_out_008.jpg'
     ],
     kyoto:[
-      'https://www.princehotels.co.jp/golf/seta/north/course/images_static/pct-hole01-01.jpg',
       'https://www.princehotels.co.jp/golf/seta/north/course/images_static/pct-hole03-01.jpg'
     ],
     osaka:[
-      'https://ibarakicc.com/img/course/img_east_index_02_pc.png'
+      'https://ibarakicc.com/img/course/img_modal_course_east_01.jpg'
     ],
     oita:[
       'https://pgm-images.s3-ap-northeast-1.amazonaws.com/img/main_visual/133/r64e5c1d3.jpg'
@@ -62,9 +61,8 @@
       'https://www.golfsavers.com/assets/image/niseko_village_golf_resort_green.jpg'
     ],
     'Furano Golf Course':[
-      'https://www.princehotels.co.jp/golf/furano/course/images_static/pct-course-palmer01.jpg',
-      'https://www.princehotels.co.jp/golf/furano/course/images_static/pct-course-palmer02.jpg',
-      'https://www.princehotels.co.jp/golf/furano/course/images_static/pct-course-palmer04.jpg'
+      'https://www.princehotels.co.jp/image/2024_4_top200_golf_1.jpg',
+      'https://www.princehotels.co.jp/image/2024_4_top200_golf_2.jpg'
     ],
     'Gozensui Golf Club':[
       'https://www.gozensui-gc.com/course/hole/images/screen.jpg'
@@ -74,34 +72,33 @@
       'https://japan.golfsavers.com/assets/image/A-Brand-golf-Club-tee-box.jpg'
     ],
     'Izumi Kokusai Golf Course':[
-      'https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/izumi-international-golf-club_1.jpg',
-      'https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/izumi-international-golf-club_2.jpg'
+      'https://image.gora.golf.rakuten.co.jp/img/golf/40002/photo1.jpg',
+      'https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/izumi-international-golf-club_1.jpg'
     ],
     'Kiyosumi Golf Club':[
       'https://image.gora.golf.rakuten.co.jp/img/golf/110020/photo1.jpg'
     ],
     'Kawana Hotel Golf Course':[
-      'https://www.princehotels.co.jp/golf/kawana/fuji/course/images_static/pct-hole03-04.jpg',
-      'https://www.princehotels.co.jp/golf/kawana/fuji/course/images_static/pct-hole03-05.jpg',
-      'https://www.princehotels.co.jp/golf/kawana/fuji/course/images_static/pct-hole03-06.jpg'
+      'https://www.princehotels.co.jp/golf/kawana/fuji/course/images_static/pct-hole02-03.jpg',
+      'https://www.princehotels.co.jp/golf/kawana/fuji/course/images_static/pct-hole03-03.jpg'
     ],
     'Daifuji Golf Course':[
       'https://www.daifuji-gc.com/course/_img/h01/img_gallery02.jpg',
       'https://www.daifuji-gc.com/course/_img/h01/img_gallery01.jpg'
     ],
     'Fuji Classic':[
-      'https://fuji-classic.com/_next/image?url=%2Fimages%2F25QQCiMSVLpWb38Dpl0p6E2mMBE.jpg&w=1920&q=85',
-      'https://fuji-classic.com/_next/image?url=%2Fimages%2FlZn9Nj5x5tghR22AF3Xvv651yYI.jpg&w=1920&q=85'
+      'https://fuji-classic.com/_next/image?dpl=dpl_GJV7G1cCFfot22sMr52xC9XF1A2T&q=75&url=%2Fimages%2FDIYA61LfWZB4nyhczQ6SPeVXVQ.jpg&w=3840',
+      'https://fuji-classic.com/_next/image?dpl=dpl_GJV7G1cCFfot22sMr52xC9XF1A2T&q=75&url=%2Fimages%2FBY4cFoz2N30pCvhBGd3cmGpS7Wc.jpg&w=3840'
     ],
     'Narusawa Golf Club':[
       'https://zuien.net/wp-content/themes/zuien/src/images/narusawa/coursegide/out/course_out_001.jpg'
     ],
     'Seta Golf Course':[
-      'https://www.princehotels.co.jp/golf/seta/north/course/images_static/pct-hole03-02.jpg',
-      'https://www.princehotels.co.jp/golf/seta/north/course/images_static/pct-hole03-03.jpg'
+      'https://www.princehotels.co.jp/golf/seta/north/course/images_static/pct-hole06-01.jpg',
+      'https://www.princehotels.co.jp/golf/seta/north/course/images_static/pct-hole18-01.jpg'
     ],
     'Ibaraki Country Club':[
-      'https://ibarakicc.com/img/course/img_east_index_03_pc.png'
+      'https://ibarakicc.com/img/course/img_modal_course_east_02.jpg'
     ],
     'Beppu Golf Club':[
       'https://pgm-images.s3-ap-northeast-1.amazonaws.com/img/main_visual/133/r64e5c0d9.jpg'
