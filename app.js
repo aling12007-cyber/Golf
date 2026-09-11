@@ -7,14 +7,9 @@
 
   const LOCAL={
     cover:'assets/cover-fuji.jpg',
-    aesthetic:'assets/aesthetic-bunker.jpg'
+    aesthetic:'assets/aesthetic-lantern.jpg'
   };
 
-  /*
-   * Only course-specific sources are used below.
-   * Do not add a generic golf-course fallback here: a wrong course photo
-   * is worse than hiding an unavailable image.
-   */
   const HERO={
     hokkaido:[
       'https://japan.golfsavers.com/assets/image/A-Brand-golf-Club-view.jpg',
@@ -244,6 +239,40 @@
     });
   }
 
+  function addAestheticGallery(){
+    const root=$('#aesthetic .aesthetic-editorial');
+    if(!root||$('.aesthetic-upload-gallery',root))return;
+
+    const gallery=document.createElement('div');
+    gallery.className='aesthetic-upload-gallery';
+    const items=[
+      ['assets/aesthetic-user-bunker.jpg','Bunker care'],
+      ['assets/aesthetic-user-meal.jpg','Clubhouse dining'],
+      ['assets/aesthetic-user-onsen.jpg','Restorative bath'],
+      ['assets/aesthetic-user-lantern.jpg','Garden detail']
+    ];
+
+    gallery.style.cssText='width:min(480px,calc(100% - 76px));margin:34px auto 0;display:grid;grid-template-columns:1fr;gap:34px;padding-bottom:96px;';
+    items.forEach(([src,caption])=>{
+      const fig=document.createElement('figure');
+      fig.style.cssText='margin:0;background:#f7f7f4;border:1px solid #eceae5;overflow:hidden;';
+      const img=document.createElement('img');
+      img.src=src;
+      img.alt=caption;
+      img.loading='lazy';
+      img.decoding='async';
+      img.style.cssText='display:block;width:100%;aspect-ratio:4/3;height:auto;object-fit:cover;object-position:center;opacity:1;';
+      const cap=document.createElement('figcaption');
+      cap.textContent=caption;
+      cap.style.cssText='padding:10px 12px 12px;border-top:1px solid #eceae5;background:#fff;color:#6f6b66;font:600 11px/1.35 "Avenir Next","Helvetica Neue",Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;';
+      fig.append(img,cap);
+      gallery.appendChild(fig);
+    });
+
+    const inner=$('.editorial-inner',root);
+    (inner||root).appendChild(gallery);
+  }
+
   function images(){
     loadChain($('#cover .cover-image img'),[LOCAL.cover],{includeCurrent:false});
 
@@ -306,6 +335,7 @@
   rebuildMenu();
   buildCover();
   prepareEditorial();
+  addAestheticGallery();
   images();
   menu();
   active();
