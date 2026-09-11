@@ -1,6 +1,10 @@
 (function(){
   'use strict';
 
+  const $=(s,r=document)=>r.querySelector(s);
+  const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+  const uniq=a=>a.filter((v,i,x)=>v&&x.indexOf(v)===i);
+
   const LOCAL={
     cover:'assets/cover-fuji.jpg',
     hokkaido:'assets/niseko-village.jpg',
@@ -9,240 +13,134 @@
   };
 
   const HERO_FALLBACKS={
-    hokkaido:[
-      'https://www.visit-hokkaido.jp/lsc/upfile/spot/0001/3097/13097_1_l.jpg',
-      'https://www.visit-hokkaido.jp/lsc/upfile/spot/0001/3097/13097_3_l.jpg',
-      LOCAL.hokkaido
-    ],
-    miyagi:[
-      'https://i.gimg.jp/resource/reserve/gstart/gcimg/230202/20240930-34.jpg?w=1200',
-      'https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/izumi-international-golf-club_0.jpg',
-      LOCAL.generic
-    ],
-    saitama:[
-      'https://www.kiyosumi-golf.co.jp/cms/wp-content/themes/theme-kiyosumi/images/img-index-course.jpg',
-      'https://image.gora.golf.rakuten.co.jp/img/golf/110020/img/c0/001.jpg',
-      LOCAL.generic
-    ],
-    shizuoka:[
-      'https://www.princehotels.co.jp/golf/kawana/fuji/course/images_static/pct-hole01-05.jpg',
-      'https://www.princehotels.co.jp/golf/kawana/fuji/course/images_static/pct-hole15-01.jpg',
-      LOCAL.generic
-    ],
-    yamanashi:[
-      'https://image.jimcdn.com/app/cms/image/transf/none/path/sad2a693edfa25add/image/i5837fbb702792e41/version/1750730084/image.jpg',
-      LOCAL.generic
-    ],
-    kyoto:[
-      'https://www.princehotels.com/en/golf/tournament/asset/img/seta/photo_05.jpg',
-      'https://www.asiaodysseytravel.com/images/asia-tours/japan-tours/seta-golf-club-700-4.jpg',
-      LOCAL.generic
-    ],
-    osaka:[
-      'https://stat.ameba.jp/user_images/20211126/08/merisuke06/ef/94/j/o0792071815037245486.jpg',
-      'https://media.triple.guide/triple-cms/c_limit,f_auto,h_2048,w_2048/2e21a769-ced1-42dd-a4f5-16642dc097ad.jpeg',
-      LOCAL.generic
-    ],
-    oita:[
-      'https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/beppu-golf-club_2.jpg',
-      'https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/beppu-golf-club_0.jpg',
-      LOCAL.generic
-    ],
-    miyazaki:[
-      'https://www.kanko-miyazaki.jp/storage/tourism_attractions/1271/responsive_images/X39EA0gDkUYBWNtMH3vSlYjv04kLQR0w5XsvuA5h__1581_1054.jpg',
-      LOCAL.generic
-    ],
-    kagoshima:[
-      'https://d1uzk9o9cg136f.cloudfront.net/f/16783386/rc/2020/01/14/d74450ecdfbb6139dd5574c7d4f580958db70aaf_large.jpg',
-      'https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/ibusuki-golf-club_3.jpg',
-      LOCAL.generic
-    ],
-    aesthetic:[
-      'https://www.golfsavers.com/assets/image/Golf-in-Japan-1.jpg',
-      LOCAL.aesthetic,
-      LOCAL.generic
-    ]
+    hokkaido:['https://www.visit-hokkaido.jp/lsc/upfile/spot/0001/3097/13097_3_l.jpg',LOCAL.hokkaido],
+    miyagi:['https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/izumi-international-golf-club_0.jpg',LOCAL.generic],
+    saitama:['https://image.gora.golf.rakuten.co.jp/img/golf/110020/img/c0/001.jpg',LOCAL.generic],
+    shizuoka:['https://www.princehotels.co.jp/golf/kawana/fuji/course/images_static/pct-hole15-01.jpg',LOCAL.generic],
+    yamanashi:[LOCAL.generic],
+    kyoto:['https://www.asiaodysseytravel.com/images/asia-tours/japan-tours/seta-golf-club-700-4.jpg',LOCAL.generic],
+    osaka:['https://media.triple.guide/triple-cms/c_limit,f_auto,h_2048,w_2048/2e21a769-ced1-42dd-a4f5-16642dc097ad.jpeg',LOCAL.generic],
+    oita:['https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/beppu-golf-club_0.jpg',LOCAL.generic],
+    miyazaki:['https://www.kanko-miyazaki.jp/storage/tourism_attractions/1271/responsive_images/X39EA0gDkUYBWNtMH3vSlYjv04kLQR0w5XsvuA5h__1581_1054.jpg',LOCAL.generic],
+    kagoshima:['https://d1uzk9o9cg136f.cloudfront.net/f/16783386/rc/2020/01/14/d74450ecdfbb6139dd5574c7d4f580958db70aaf_large.jpg',LOCAL.generic],
+    aesthetic:[LOCAL.aesthetic,LOCAL.generic]
   };
 
   const STORY_FALLBACKS={
     'Niseko Village Golf Course':[LOCAL.hokkaido,LOCAL.generic],
-    'Furano Golf Course':[
-      'https://www.princehotels.co.jp/golf/furano/course/images_static/pct-hole15-01-01.jpg',
-      LOCAL.hokkaido,LOCAL.generic
-    ],
-    'Gozensui Golf Club':[
-      'https://golf-pass.brightspotcdn.com/55/c9/aed7e1d0c39c488c9afbdcb1/118068.jpg',
-      LOCAL.hokkaido,LOCAL.generic
-    ],
-    'Daifuji Golf Course':[
-      'https://www.daifuji-gc.com/course/_img/h01/img_gallery01.jpg',
-      LOCAL.generic
-    ],
-    'Fuji Classic':[
-      'https://fuji-classic.com/_next/image?url=%2Fimages%2Frj99obGXlII0ZAtVf3rVl0s1g.jpg&w=1920&q=85',
-      LOCAL.generic
-    ]
+    'Furano Golf Course':['https://www.princehotels.co.jp/golf/furano/course/images_static/pct-hole15-01-01.jpg',LOCAL.hokkaido,LOCAL.generic],
+    'Gozensui Golf Club':['https://golf-pass.brightspotcdn.com/55/c9/aed7e1d0c39c488c9afbdcb1/118068.jpg',LOCAL.hokkaido,LOCAL.generic],
+    'Daifuji Golf Course':['https://www.daifuji-gc.com/course/_img/h01/img_gallery01.jpg',LOCAL.generic],
+    'Fuji Classic':['https://image.jimcdn.com/app/cms/image/transf/none/path/sad2a693edfa25add/image/i5837fbb702792e41/version/1750730084/image.jpg',LOCAL.generic]
   };
 
-  function uniq(list){
-    return list.filter(function(v,i,a){return v&&a.indexOf(v)===i;});
-  }
-
-  function markReady(img){
-    img.classList.add('is-ready');
-  }
-
-  function installFallback(img,candidates,finalLocal){
+  function markReady(img){img.classList.add('is-ready');}
+  function loadChain(img,candidates,finalLocal){
     if(!img)return;
     img.removeAttribute('onerror');
+    img.removeAttribute('onload');
     img.style.display='block';
-    const original=img.getAttribute('src');
-    const chain=uniq([original].concat(candidates||[],[finalLocal||LOCAL.generic]));
-    let index=Math.max(0,chain.indexOf(original));
-    let finished=false;
-
-    function loaded(){
-      if(finished)return;
-      finished=true;
-      img.style.display='block';
-      if(img.src.indexOf('assets/')!==-1)img.classList.add('image-fallback');
-      markReady(img);
-    }
-
+    const chain=uniq([img.getAttribute('src')].concat(candidates||[],[finalLocal||LOCAL.generic]));
+    let i=0;
     function next(){
-      finished=false;
-      img.style.display='block';
-      index+=1;
-      if(index>=chain.length){
-        img.onerror=null;
-        img.src=LOCAL.generic;
-        img.classList.add('image-fallback');
-        markReady(img);
-        return;
+      if(i>=chain.length){img.src=finalLocal||LOCAL.generic;img.classList.add('image-fallback');markReady(img);return;}
+      const src=chain[i++];
+      img.onload=function(){if(src.indexOf('assets/')!==-1)img.classList.add('image-fallback');markReady(img);};
+      img.onerror=next;
+      img.src=src;
+    }
+    next();
+  }
+
+  function buildTopActions(){
+    const mast=$('.mast');
+    if(!mast||$('.mast-actions'))return;
+    const more=$('#moreBtn');if(more)more.style.display='none';
+    const box=document.createElement('div');box.className='mast-actions';
+    box.innerHTML='<button class="top-action" data-action="share" aria-label="Share"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><path d="M8 12l8-6M8 12l8 6"/></svg></button><button class="top-action" data-action="print" aria-label="Print"><svg viewBox="0 0 24 24"><path d="M8 3h8v5H8z"/><path d="M6 9H5a2 2 0 0 0-2 2v4h4"/><path d="M18 15h3v-4a2 2 0 0 0-2-2h-1"/><path d="M7 14h10v7H7z"/></svg></button><button class="top-action" data-action="contact" aria-label="Contact"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a16 16 0 0 0 5 5L15 13l5 2v4c-8.5.8-15.8-6.5-15-15z"/></svg></button>';
+    mast.appendChild(box);
+    box.addEventListener('click',async e=>{
+      const b=e.target.closest('[data-action]');if(!b)return;
+      if(b.dataset.action==='share'){
+        if(navigator.share){try{await navigator.share({title:document.title,url:location.href});}catch(_){}}
+        else if(navigator.clipboard){try{await navigator.clipboard.writeText(location.href);}catch(_){}}
       }
-      img.src=chain[index];
-    }
-
-    img.addEventListener('load',loaded);
-    img.addEventListener('error',next);
-    if(img.complete){
-      if(img.naturalWidth>0)loaded();
-      else next();
-    }
-  }
-
-  const cover=document.querySelector('#cover .cover-image img');
-  if(cover){
-    cover.alt='Golf course with Mount Fuji';
-    cover.loading='eager';
-    installFallback(cover,[LOCAL.cover],LOCAL.cover);
-  }
-
-  Object.keys(HERO_FALLBACKS).forEach(function(id){
-    const img=document.querySelector('#'+id+' .chapter-hero img');
-    if(img){
-      img.loading=id==='hokkaido'?'eager':'lazy';
-      img.decoding='async';
-      installFallback(img,HERO_FALLBACKS[id],id==='hokkaido'?LOCAL.hokkaido:(id==='aesthetic'?LOCAL.aesthetic:LOCAL.generic));
-    }
-  });
-
-  document.querySelectorAll('.story-photo img').forEach(function(img){
-    img.loading='lazy';
-    img.decoding='async';
-    installFallback(img,STORY_FALLBACKS[img.alt]||[],img.alt.indexOf('Niseko')!==-1?LOCAL.hokkaido:LOCAL.generic);
-  });
-
-  /* Rebuild the final gallery from repository-hosted assets only. */
-  const aesthetic=document.querySelector('#aesthetic .aesthetic-editorial');
-  if(aesthetic){
-    const old=aesthetic.querySelector('.aesthetic-stack');
-    if(old)old.remove();
-    const gallery=document.createElement('div');
-    gallery.className='aesthetic-stack';
-    [
-      ['Meticulous bunker care','assets/aesthetic-bunker.jpg'],
-      ['Clubhouse dining','assets/aesthetic-meal.jpg'],
-      ['Japanese bath','assets/aesthetic-bath.jpg'],
-      ['Traditional landscape detail','assets/aesthetic-lantern.jpg']
-    ].forEach(function(item){
-      const fig=document.createElement('figure');
-      const img=document.createElement('img');
-      img.alt=item[0];
-      img.src=item[1];
-      img.loading='lazy';
-      img.decoding='async';
-      img.addEventListener('load',function(){markReady(img);});
-      img.addEventListener('error',function(){img.src=LOCAL.generic;img.classList.add('image-fallback');markReady(img);},{once:true});
-      fig.appendChild(img);
-      gallery.appendChild(fig);
-      if(img.complete&&img.naturalWidth>0)markReady(img);
-    });
-    aesthetic.appendChild(gallery);
-  }
-
-  const coverLine=document.querySelector('#cover .cover-breath em');
-  if(coverLine)coverLine.textContent='Discover Japan Through Golf';
-  document.querySelectorAll('a.map').forEach(function(a){a.textContent='Google Maps';});
-
-  const menuBtn=document.getElementById('menuBtn');
-  const moreBtn=document.getElementById('moreBtn');
-  const menu=document.getElementById('menuPanel');
-  const more=document.getElementById('morePanel');
-
-  function closePanels(){
-    if(menu)menu.classList.remove('open');
-    if(more)more.classList.remove('open');
-    document.body.classList.remove('menu-open');
-  }
-
-  if(menuBtn&&menu){
-    menuBtn.addEventListener('click',function(e){
-      e.stopPropagation();
-      if(window.innerWidth>980)return;
-      if(more)more.classList.remove('open');
-      menu.classList.toggle('open');
-      document.body.classList.toggle('menu-open',menu.classList.contains('open'));
+      if(b.dataset.action==='print')window.print();
+      if(b.dataset.action==='contact')location.href='mailto:?subject='+encodeURIComponent(document.title)+'&body='+encodeURIComponent(location.href);
     });
   }
-  if(moreBtn&&more){
-    moreBtn.addEventListener('click',function(e){
-      e.stopPropagation();
-      if(menu)menu.classList.remove('open');
-      document.body.classList.remove('menu-open');
-      more.classList.toggle('open');
+
+  function rebuildMenu(){
+    const menu=$('#menuPanel'),tabs=$$('#tabs a');if(!menu||!tabs.length)return;
+    menu.innerHTML=tabs.map(a=>'<a href="'+a.getAttribute('href')+'">'+a.textContent+'</a>').join('');
+  }
+
+  function buildCoverRight(){
+    const box=$('#cover .cover-breath');if(!box)return;
+    box.innerHTML='<div class="panel-arrow-wrap"><a aria-label="Continue" class="down-arrow" href="#hokkaido"></a></div><div class="cover-intro"><div class="cover-kicker">Discover Japan Through Golf</div><h2>A Curated Journey Through Japan\'s Signature Golf Regions</h2><div class="intro-rule"></div><p>From Hokkaido to Kyushu, this guide presents Japan through destination golf, landscape and hospitality.</p><p>Scroll through the chapters and the left-hand visual changes with each region while the editorial story continues on the right.</p></div>';
+  }
+
+  function prepareChapters(){
+    $$('.chapter.region, .chapter.aesthetic').forEach(section=>{
+      const editorial=$('.editorial',section),overlay=$('.hero-overlay',section);if(!editorial||!overlay)return;
+      if(!$('.chapter-intro',editorial)){
+        const label=($('em',overlay)?.textContent||'').replace(/^—\s*/,'').trim();
+        const title=($('h2',overlay)?.textContent||'').replace(/\s+/g,' ').trim();
+        const intro=document.createElement('div');intro.className='chapter-intro';
+        intro.innerHTML='<div class="chapter-cue-label">'+(label||'Explore Japan')+'</div><div class="chapter-cue-title">'+title+'</div><div class="chapter-cue-arrow" aria-hidden="true"></div>';
+        editorial.prepend(intro);
+      }
+      if(!$('.editorial-inner',editorial)){
+        const intro=$('.chapter-intro',editorial),wrap=document.createElement('div');wrap.className=section.id==='aesthetic'?'aesthetic-inner editorial-inner':'editorial-inner';
+        Array.from(editorial.childNodes).forEach(n=>{if(n!==intro)wrap.appendChild(n);});
+        editorial.appendChild(wrap);
+      }
     });
   }
-  document.addEventListener('click',function(e){
-    if(more&&more.contains(e.target))return;
-    if(menu&&menu.contains(e.target))return;
-    closePanels();
-  });
-  if(menu)menu.addEventListener('click',function(e){
-    if(e.target.closest('a'))closePanels();
-  });
 
-  const tabs=[].slice.call(document.querySelectorAll('#tabs a'));
-  const sections=tabs.map(function(a){return document.querySelector(a.getAttribute('href'));});
-  let current=-1;
-  let ticking=false;
-
-  function sync(){
-    ticking=false;
-    const desktop=window.innerWidth>980;
-    const probe=window.scrollY+(desktop?window.innerHeight*.32:(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--mobile-head'))||70)+90);
-    let index=0;
-    sections.forEach(function(section,i){if(section&&section.offsetTop<=probe)index=i;});
-    if(index===current)return;
-    current=index;
-    tabs.forEach(function(a,i){a.classList.toggle('active',i===index);});
-    if(!desktop&&tabs[index])tabs[index].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  function rebuildAesthetic(){
+    const root=$('#aesthetic .editorial-inner');if(!root)return;
+    const old=$('.aesthetic-stack',root);if(old)old.remove();
+    const gallery=document.createElement('div');gallery.className='aesthetic-stack';
+    [['Meticulous bunker care','assets/aesthetic-bunker.jpg'],['Clubhouse dining','assets/aesthetic-meal.jpg'],['Japanese bath','assets/aesthetic-bath.jpg'],['Traditional landscape detail','assets/aesthetic-lantern.jpg']].forEach(item=>{
+      const f=document.createElement('figure'),img=document.createElement('img');img.alt=item[0];img.src=item[1];img.loading='lazy';img.decoding='async';f.appendChild(img);gallery.appendChild(f);loadChain(img,[LOCAL.generic],LOCAL.generic);
+    });
+    root.appendChild(gallery);
   }
 
-  function onScroll(){
-    if(!ticking){requestAnimationFrame(sync);ticking=true;}
+  function prepareImages(){
+    const cover=$('#cover .cover-image img');if(cover){cover.loading='eager';loadChain(cover,[LOCAL.cover],LOCAL.cover);}
+    Object.keys(HERO_FALLBACKS).forEach(id=>{
+      const img=$('#'+id+' .chapter-hero img');if(!img)return;img.loading=id==='hokkaido'?'eager':'lazy';img.decoding='async';loadChain(img,HERO_FALLBACKS[id],id==='hokkaido'?LOCAL.hokkaido:(id==='aesthetic'?LOCAL.aesthetic:LOCAL.generic));
+    });
+    $$('.story-photo img').forEach(img=>{img.loading='lazy';img.decoding='async';loadChain(img,STORY_FALLBACKS[img.alt]||[],img.alt.includes('Niseko')?LOCAL.hokkaido:LOCAL.generic);});
   }
-  window.addEventListener('scroll',onScroll,{passive:true});
-  window.addEventListener('resize',function(){closePanels();onScroll();});
-  sync();
+
+  function setupMenu(){
+    const btn=$('#menuBtn'),menu=$('#menuPanel');if(!btn||!menu)return;
+    const close=()=>{menu.classList.remove('open');document.body.classList.remove('menu-open');};
+    btn.addEventListener('click',e=>{e.stopPropagation();menu.classList.toggle('open');document.body.classList.toggle('menu-open',menu.classList.contains('open'));});
+    document.addEventListener('click',e=>{if(menu.classList.contains('open')&&!menu.contains(e.target)&&!btn.contains(e.target))close();});
+    menu.addEventListener('click',e=>{if(e.target.closest('a'))close();});
+  }
+
+  function setupActiveChapter(){
+    const sections=$$('.chapter'),links=$$('a[href^="#"]'),ratios=new Map();
+    const set=id=>links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+id));
+    const io=new IntersectionObserver(entries=>{
+      entries.forEach(e=>ratios.set(e.target.id,e.intersectionRatio));
+      let id=sections[0]?.id,max=-1;sections.forEach(s=>{const r=ratios.get(s.id)||0;if(r>max){max=r;id=s.id;}});if(id)set(id);
+    },{threshold:[0,.15,.35,.55,.75],rootMargin:'-8% 0px -38% 0px'});
+    sections.forEach(s=>io.observe(s));
+  }
+
+  buildTopActions();
+  rebuildMenu();
+  buildCoverRight();
+  prepareChapters();
+  prepareImages();
+  rebuildAesthetic();
+  $$('.map').forEach(a=>a.textContent='Google Maps');
+  setupMenu();
+  setupActiveChapter();
 })();
