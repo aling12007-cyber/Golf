@@ -228,35 +228,58 @@
 
     const hero=$('.chapter-hero img',section);
     if(hero){
-      hero.src=LOCAL.aesthetic;
-      hero.classList.add('is-ready');
+      hero.removeAttribute('src');
+      hero.classList.remove('is-ready');
       hero.style.position='absolute';
       hero.style.inset='0';
       hero.style.width='100%';
       hero.style.height='100%';
       hero.style.objectFit='cover';
       hero.style.objectPosition='center';
-      hero.style.opacity='1';
+      hero.style.opacity='0';
+
+      fetch('assets/aesthetic-bunker-small.jpg.b64.txt?v=20260911s',{cache:'no-store'})
+        .then(res=>{if(!res.ok)throw new Error('bunker image load failed');return res.text();})
+        .then(text=>{
+          const b64=text.replace(/\s+/g,'');
+          if(!b64.startsWith('/9j/'))throw new Error('invalid bunker image data');
+          hero.onload=()=>{hero.classList.add('is-ready');hero.style.opacity='1';};
+          hero.src='data:image/jpeg;base64,'+b64;
+        })
+        .catch(()=>{
+          hero.src='assets/aesthetic-lantern.jpg';
+          hero.classList.add('is-ready');
+          hero.style.opacity='1';
+        });
     }
 
     const root=$('.aesthetic-editorial',section);
     if(!root)return;
 
+    const title=$('h3',root);
+    const paragraphs=$$('p',root);
+    const titleNode=title?title.cloneNode(true):null;
+    const paragraphNodes=paragraphs.map(p=>p.cloneNode(true));
+
+    root.innerHTML='';
+    root.style.paddingTop='var(--bar)';
+
+    const inner=document.createElement('div');
+    inner.className='editorial-inner aesthetic-inner';
+    inner.style.cssText='width:min(480px,calc(100% - 76px));margin:0 auto;padding:92px 0 112px;';
+
+    if(titleNode)inner.appendChild(titleNode);
+    paragraphNodes.forEach(p=>inner.appendChild(p));
+
+    const gallery=document.createElement('div');
+    gallery.className='aesthetic-upload-gallery';
+    gallery.style.cssText='width:100%;margin:34px 0 0;display:grid;grid-template-columns:1fr;gap:34px;padding:0;';
+
     const assets=[
-      ['assets/aesthetic-bunker.jpg','Bunker care'],
       ['assets/aesthetic-meal.jpg','Clubhouse dining'],
       ['assets/aesthetic-bath.jpg','Restorative bath'],
       ['assets/aesthetic-lantern.jpg','Garden detail']
     ];
-
-    let gallery=$('.aesthetic-upload-gallery',root);
-    if(!gallery){
-      gallery=document.createElement('div');
-      gallery.className='aesthetic-upload-gallery';
-      root.appendChild(gallery);
-    }
-    gallery.innerHTML='';
-    gallery.style.cssText='width:min(480px,calc(100% - 76px));margin:34px auto 0;display:grid;grid-template-columns:1fr;gap:34px;padding-bottom:96px;';
 
     assets.forEach(([src,caption])=>{
       const fig=document.createElement('figure');
@@ -274,6 +297,9 @@
       fig.append(img,cap);
       gallery.appendChild(fig);
     });
+
+    inner.appendChild(gallery);
+    root.appendChild(inner);
   }
 
   function images(){
