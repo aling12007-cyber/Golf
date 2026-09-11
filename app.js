@@ -3,56 +3,14 @@
 
   const $=(s,r=document)=>r.querySelector(s);
   const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
-  const uniq=a=>a.filter((v,i,x)=>v&&x.indexOf(v)===i);
-
-  const LOCAL={
-    cover:'assets/cover-fuji.jpg',
-    aesthetic:'assets/aesthetic-bunker.jpg'
-  };
-
-  const HERO={
-    hokkaido:[
-      'https://japan.golfsavers.com/assets/image/A-Brand-golf-Club-view.jpg',
-      'https://japan.golfsavers.com/assets/image/A-Brand-golf-Club-clubhouse.jpg'
-    ],
-    miyagi:[
-      'https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/izumi-international-golf-club_7.jpg'
-    ],
-    saitama:[
-      'https://www.kiyosumi-golf.co.jp/cms/wp-content/themes/theme-kiyosumi/images/img-index-course.jpg',
-      'https://image.gora.golf.rakuten.co.jp/img/golf/drone/panorama/110020.jpg'
-    ],
-    shizuoka:[
-      'https://www.princehotels.co.jp/golf/kawana/fuji/course/images_static/pct-hole01-05.jpg',
-      'https://www.princehotels.co.jp/golf/kawana/fuji/course/images_static/pct-hole15-01.jpg'
-    ],
-    yamanashi:[
-      'https://zuien.net/wp-content/themes/zuien/src/images/narusawa/coursegide/out/course_out_008.jpg'
-    ],
-    kyoto:[
-      'https://www.princehotels.co.jp/golf/seta/north/course/images_static/pct-hole03-01.jpg'
-    ],
-    osaka:[
-      'https://ibarakicc.com/img/course/img_modal_course_east_01.jpg'
-    ],
-    oita:[
-      'https://pgm-images.s3-ap-northeast-1.amazonaws.com/img/main_visual/133/r64e5c1d3.jpg'
-    ],
-    miyazaki:[
-      'https://www.miyazaki-city.tourism.or.jp/storage/tourism_attractions/10013/responsive_images/tZoBx2oMkaPpx6xA4GJDAReWOBnW1NbYDCTIJ2NS__1680_1120.jpg',
-      'https://www.miyazaki-city.tourism.or.jp/storage/tourism_attractions/10013/responsive_images/rRsrJIpy0kIuGCnTNVaHUsSLrX4SairtVFCfIbU2__1680_1120.jpg'
-    ],
-    kagoshima:[
-      'https://ibusukigolf.iwasakihotels.com/en/img/slider/1.jpg',
-      'https://ibusukigolf.iwasakihotels.com/en/img/slider/2.jpg'
-    ]
-  };
+  const unique=a=>a.filter((v,i,x)=>v&&x.indexOf(v)===i);
 
   const ARTICLE_IMAGES={
     'Niseko Village Golf Course':[
       'https://www.golfsavers.com/assets/image/niseko_village_golf_resort_aerial.jpg',
       'https://www.golfsavers.com/assets/image/niseko_village_golf_resort_fairway.jpg',
-      'https://www.golfsavers.com/assets/image/niseko_village_golf_resort_green.jpg'
+      'https://www.golfsavers.com/assets/image/niseko_village_golf_resort_green.jpg',
+      'assets/niseko-village.jpg'
     ],
     'Furano Golf Course':[
       'https://www.princehotels.co.jp/image/2024_4_top200_golf_1.jpg',
@@ -98,268 +56,173 @@
     ]
   };
 
-  function loadChain(img,list,{includeCurrent=false,onExhausted=null}={}){
-    if(!img)return;
-    const chain=uniq((includeCurrent&&img.getAttribute('src')?[img.getAttribute('src')]:[]).concat(list||[]));
+  function loadFallback(img,sources,onFail){
+    const queue=unique(sources);
     let i=0;
-    img.removeAttribute('onerror');
-    img.classList.remove('is-ready','image-fallback','is-unavailable');
-
-    function failAll(){
-      img.classList.add('is-unavailable');
-      if(typeof onExhausted==='function')onExhausted(img);
-    }
-
-    function next(){
-      if(i>=chain.length){failAll();return;}
-      const src=chain[i++];
-      img.onload=()=>{
-        img.classList.remove('is-unavailable');
-        img.classList.add('is-ready');
-      };
+    const next=()=>{
+      if(i>=queue.length){ if(onFail)onFail(); return; }
       img.onerror=next;
-      img.setAttribute('src',src);
-      if(img.complete&&img.naturalWidth>0)img.onload();
-    }
+      img.onload=()=>img.classList.add('is-ready');
+      img.src=queue[i++];
+    };
     next();
   }
 
-  function buildToolbar(){
-    const mast=$('.mast');
-    if(!mast)return;
-    const old=$('#moreBtn');
-    if(old)old.remove();
-    if($('.mast-actions'))return;
-
-    const actions=document.createElement('div');
-    actions.className='mast-actions';
-    actions.innerHTML='<button class="top-action" data-a="share" aria-label="Share"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2"></circle><circle cx="6" cy="12" r="2"></circle><circle cx="18" cy="19" r="2"></circle><path d="M8 12l8-6M8 12l8 6"></path></svg></button><button class="top-action" data-a="print" aria-label="Print"><svg viewBox="0 0 24 24"><path d="M8 3h8v5H8z"></path><path d="M6 9H5a2 2 0 0 0-2 2v4h4"></path><path d="M18 15h3v-4a2 2 0 0 0-2-2h-1"></path><path d="M7 14h10v7H7z"></path></svg></button><button class="top-action" data-a="contact" aria-label="Contact"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a16 16 0 0 0 5 5L15 13l5 2v4c-8.5.8-15.8-6.5-15-15z"></path></svg></button>';
-    mast.appendChild(actions);
-
-    actions.addEventListener('click',async e=>{
-      const b=e.target.closest('[data-a]');
-      if(!b)return;
-      if(b.dataset.a==='print')return window.print();
-      if(b.dataset.a==='contact')return location.href='mailto:?subject='+encodeURIComponent(document.title)+'&body='+encodeURIComponent(location.href);
-      if(navigator.share){try{await navigator.share({title:document.title,url:location.href});}catch(_){}}
-      else if(navigator.clipboard){try{await navigator.clipboard.writeText(location.href);}catch(_){}}
+  function setupHeroFallbacks(){
+    $$('.chapter.region .chapter-hero img').forEach(img=>{
+      const fallback=img.dataset.fallback;
+      if(!fallback)return;
+      const primary=img.currentSrc||img.src;
+      img.onerror=()=>{
+        img.onerror=null;
+        if(fallback&&fallback!==primary)img.src=fallback;
+      };
     });
   }
 
-  function rebuildMenu(){
-    const panel=$('#menuPanel');
-    if(!panel)return;
-    panel.innerHTML='<div class="menu-title">All Chapters</div>'+$$('#tabs a').map(a=>'<a href="'+a.getAttribute('href')+'">'+a.textContent+'</a>').join('');
-  }
+  function prepareSection(section){
+    if(section.dataset.prepared==='1')return;
+    section.dataset.prepared='1';
+    const editorial=$('.editorial',section);
+    if(!editorial)return;
 
-  function buildCover(){
-    const imgBox=$('#cover .cover-image');
-    const right=$('#cover .cover-breath');
-    if(imgBox&&!$('.cover-byline',imgBox)){
-      imgBox.insertAdjacentHTML('beforeend','<div class="cover-byline">— Curated Golf Guide</div><div class="cover-subtitle">Discover Japan<br>Through Golf</div>');
-    }
-    if(right){
-      right.innerHTML='<div class="cover-intro"><div class="cover-kicker">Japan Golf Itineraries</div><h2>A Guide to Japan’s Signature Golf Destinations</h2><div class="intro-rule"></div><p>From Hokkaido’s open fairways to Mount Fuji panoramas, classic Pacific coast courses and the refined clubs of Kansai, this guide brings together distinctive golf experiences across Japan.</p><p>Scroll to move through each region. The image on the left stays full-screen while the story changes on the right.</p></div>';
-    }
-  }
-
-  function articleSources(title,sectionId){
-    const blocked=new Set(HERO[sectionId]||[]);
-    const heroImg=$('#'+sectionId+' .chapter-hero img');
-    if(heroImg){
-      if(heroImg.getAttribute('src'))blocked.add(heroImg.getAttribute('src'));
-      if(heroImg.currentSrc)blocked.add(heroImg.currentSrc);
-    }
-    return uniq(ARTICLE_IMAGES[title]||[]).filter(src=>src&&!blocked.has(src));
-  }
-
-  function ensurePhotoAfter(article,sectionId){
-    const title=$('h3',article)?.textContent.trim()||'';
-    const sources=articleSources(title,sectionId);
-    const editorial=article.parentElement;
-    let photo=$$('.story-photo',editorial).find(fig=>($('img',fig)?.alt||'').trim()===title)||null;
-
-    if(!sources.length){
-      if(photo)photo.remove();
-      return;
+    let inner=$('.editorial-inner',editorial);
+    if(!inner){
+      inner=document.createElement('div');
+      inner.className='editorial-inner';
+      while(editorial.firstChild)inner.appendChild(editorial.firstChild);
+      editorial.appendChild(inner);
     }
 
-    if(!photo){
-      photo=document.createElement('figure');
-      photo.className='story-photo';
-      photo.innerHTML='<img alt="'+title.replace(/"/g,'&quot;')+'" decoding="async" loading="lazy"><figcaption>'+title+'</figcaption>';
-    }else{
-      let cap=$('figcaption',photo);
-      if(!cap){cap=document.createElement('figcaption');photo.appendChild(cap);}
-      cap.textContent=title;
-    }
+    $$('.story',inner).forEach(article=>{
+      const title=$('h3',article)?.textContent.trim()||'';
+      const sources=ARTICLE_IMAGES[title]||[];
+      if(!sources.length)return;
 
-    article.after(photo);
-    const img=$('img',photo);
-    if(img){
+      const fig=document.createElement('figure');
+      fig.className='story-photo';
+      const img=document.createElement('img');
       img.alt=title;
       img.loading='lazy';
       img.decoding='async';
       img.referrerPolicy='no-referrer';
-      img.dataset.sources=JSON.stringify(sources);
-      img.classList.remove('is-ready','is-unavailable');
-      img.setAttribute('src',sources[0]);
-    }
-  }
-
-  function prepareEditorial(){
-    $$('.chapter.region').forEach(section=>{
-      const editorial=$('.editorial',section);
-      if(!editorial)return;
-      const intro=$('.chapter-intro',editorial);
-      if(intro)intro.remove();
-      $$('.story',editorial).forEach(article=>ensurePhotoAfter(article,section.id));
-      if($('.editorial-inner',editorial))return;
-      const wrap=document.createElement('div');
-      wrap.className='editorial-inner';
-      Array.from(editorial.childNodes).forEach(n=>wrap.appendChild(n));
-      editorial.appendChild(wrap);
+      const cap=document.createElement('figcaption');
+      cap.textContent=title;
+      fig.append(img,cap);
+      article.after(fig);
+      loadFallback(img,sources,()=>fig.remove());
     });
   }
 
-  function fixAesthetic(){
+  function setupLazyEditorial(){
+    const sections=$$('.chapter.region');
+    if(!('IntersectionObserver' in window)){
+      sections.forEach(prepareSection);
+      return;
+    }
+    const io=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(!entry.isIntersecting)return;
+        prepareSection(entry.target);
+        io.unobserve(entry.target);
+      });
+    },{rootMargin:'900px 0px'});
+    sections.forEach(section=>io.observe(section));
+  }
+
+  function setupAestheticHero(){
     const section=$('#aesthetic');
-    if(!section)return;
+    const hero=$('[data-bunker-hero]',section);
+    if(!section||!hero)return;
 
-    const hero=$('.chapter-hero img',section);
-    if(hero){
-      hero.removeAttribute('src');
-      hero.classList.remove('is-ready');
-      hero.style.position='absolute';
-      hero.style.inset='0';
-      hero.style.width='100%';
-      hero.style.height='100%';
-      hero.style.objectFit='cover';
-      hero.style.objectPosition='center';
-      hero.style.opacity='0';
-
-      fetch('assets/aesthetic-bunker-small.jpg.b64.txt?v=20260911s',{cache:'no-store'})
-        .then(res=>{if(!res.ok)throw new Error('bunker image load failed');return res.text();})
+    const load=()=>{
+      if(hero.dataset.loaded==='1')return;
+      hero.dataset.loaded='1';
+      fetch('assets/aesthetic-bunker-small.jpg.b64.txt?v=20260911u',{cache:'force-cache'})
+        .then(r=>{if(!r.ok)throw new Error('image');return r.text();})
         .then(text=>{
           const b64=text.replace(/\s+/g,'');
-          if(!b64.startsWith('/9j/'))throw new Error('invalid bunker image data');
-          hero.onload=()=>{hero.classList.add('is-ready');hero.style.opacity='1';};
+          if(!b64.startsWith('/9j/'))throw new Error('jpeg');
+          hero.onload=()=>hero.classList.add('is-ready');
           hero.src='data:image/jpeg;base64,'+b64;
         })
         .catch(()=>{
+          hero.onload=()=>hero.classList.add('is-ready');
           hero.src='assets/aesthetic-lantern.jpg';
-          hero.classList.add('is-ready');
-          hero.style.opacity='1';
         });
-    }
-
-    const root=$('.aesthetic-editorial',section);
-    if(!root)return;
-
-    const title=$('h3',root);
-    const paragraphs=$$('p',root);
-    const titleNode=title?title.cloneNode(true):null;
-    const paragraphNodes=paragraphs.map(p=>p.cloneNode(true));
-
-    root.innerHTML='';
-    root.style.paddingTop='var(--bar)';
-
-    const inner=document.createElement('div');
-    inner.className='editorial-inner aesthetic-inner';
-    inner.style.cssText='width:min(480px,calc(100% - 76px));margin:0 auto;padding:92px 0 112px;';
-
-    if(titleNode)inner.appendChild(titleNode);
-    paragraphNodes.forEach(p=>inner.appendChild(p));
-
-    const gallery=document.createElement('div');
-    gallery.className='aesthetic-upload-gallery';
-    gallery.style.cssText='width:100%;margin:34px 0 0;display:grid;grid-template-columns:1fr;gap:34px;padding:0;';
-
-    const assets=[
-      ['assets/aesthetic-meal.jpg','Clubhouse dining'],
-      ['assets/aesthetic-bath.jpg','Restorative bath'],
-      ['assets/aesthetic-lantern.jpg','Garden detail']
-    ];
-
-    assets.forEach(([src,caption])=>{
-      const fig=document.createElement('figure');
-      fig.style.cssText='margin:0;background:#f7f7f4;border:1px solid #eceae5;overflow:hidden;';
-      const img=document.createElement('img');
-      img.src=src;
-      img.alt=caption;
-      img.loading='lazy';
-      img.decoding='async';
-      img.className='is-ready';
-      img.style.cssText='display:block;width:100%;aspect-ratio:4/3;height:auto;object-fit:cover;object-position:center;opacity:1;';
-      const cap=document.createElement('figcaption');
-      cap.textContent=caption;
-      cap.style.cssText='padding:10px 12px 12px;border-top:1px solid #eceae5;background:#fff;color:#6f6b66;font:600 11px/1.35 "Avenir Next","Helvetica Neue",Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;';
-      fig.append(img,cap);
-      gallery.appendChild(fig);
-    });
-
-    inner.appendChild(gallery);
-    root.appendChild(inner);
-  }
-
-  function images(){
-    loadChain($('#cover .cover-image img'),[LOCAL.cover],{includeCurrent:false});
-
-    $$('.chapter.region').forEach(section=>{
-      loadChain($('.chapter-hero img',section),HERO[section.id]||[],{includeCurrent:false});
-    });
-
-    $$('.story-photo img').forEach(img=>{
-      let list=[];
-      try{list=JSON.parse(img.dataset.sources||'[]');}catch(_){list=[];}
-      loadChain(img,list,{
-        includeCurrent:false,
-        onExhausted:broken=>{
-          const fig=broken.closest('.story-photo');
-          if(fig)fig.remove();
-        }
-      });
-    });
-  }
-
-  function menu(){
-    const btn=$('#menuBtn'),panel=$('#menuPanel');
-    if(!btn||!panel)return;
-    const close=()=>{
-      panel.classList.remove('open');
-      document.body.classList.remove('menu-open');
     };
+
+    if(!('IntersectionObserver' in window)){load();return;}
+    const io=new IntersectionObserver(entries=>{
+      if(entries.some(e=>e.isIntersecting)){
+        load();
+        io.disconnect();
+      }
+    },{rootMargin:'1000px 0px'});
+    io.observe(section);
+  }
+
+  function setupMenu(){
+    const btn=$('#menuBtn');
+    const panel=$('#menuPanel');
+    if(!btn||!panel)return;
+
+    panel.innerHTML='<div class="menu-title">All Chapters</div>'+$$('.chapter').map(section=>{
+      const label=section.id==='cover'?'Cover Page':section.id==='aesthetic'?'Japan Golf Aesthetic':section.id.charAt(0).toUpperCase()+section.id.slice(1);
+      return '<a href="#'+section.id+'">'+label+'</a>';
+    }).join('');
+
+    const close=()=>{panel.classList.remove('open');document.body.classList.remove('menu-open');};
     btn.addEventListener('click',e=>{
       e.stopPropagation();
       panel.classList.toggle('open');
       document.body.classList.toggle('menu-open',panel.classList.contains('open'));
     });
-    document.addEventListener('click',e=>{
-      if(panel.classList.contains('open')&&!panel.contains(e.target)&&!btn.contains(e.target))close();
-    });
     panel.addEventListener('click',e=>{if(e.target.closest('a'))close();});
+    document.addEventListener('click',e=>{if(panel.classList.contains('open')&&!panel.contains(e.target)&&!btn.contains(e.target))close();});
   }
 
-  function active(){
+  function setupActions(){
+    $('.mast-actions')?.addEventListener('click',async e=>{
+      const btn=e.target.closest('[data-action]');
+      if(!btn)return;
+      const action=btn.dataset.action;
+      if(action==='print'){window.print();return;}
+      if(action==='contact'){
+        location.href='mailto:?subject='+encodeURIComponent(document.title)+'&body='+encodeURIComponent(location.href);
+        return;
+      }
+      if(action==='share'){
+        if(navigator.share){try{await navigator.share({title:document.title,url:location.href});}catch(_){}}
+        else if(navigator.clipboard){try{await navigator.clipboard.writeText(location.href);}catch(_){}}
+      }
+    });
+  }
+
+  function setupActiveMenu(){
     const sections=$$('.chapter');
-    const links=$$('a[href^="#"]');
-    let current='cover';
-    function sync(){
+    const links=()=>$$('#menuPanel a');
+    let ticking=false;
+    const sync=()=>{
+      ticking=false;
       const y=scrollY+innerHeight*.42;
+      let current=sections[0]?.id||'';
       sections.forEach(s=>{if(s.offsetTop<=y)current=s.id;});
-      links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+current));
-    }
-    addEventListener('scroll',sync,{passive:true});
-    addEventListener('resize',sync);
+      links().forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+current));
+    };
+    addEventListener('scroll',()=>{
+      if(ticking)return;
+      ticking=true;
+      requestAnimationFrame(sync);
+    },{passive:true});
+    addEventListener('resize',sync,{passive:true});
     sync();
   }
 
-  buildToolbar();
-  rebuildMenu();
-  buildCover();
-  prepareEditorial();
-  fixAesthetic();
-  images();
-  menu();
-  active();
+  setupHeroFallbacks();
+  setupLazyEditorial();
+  setupAestheticHero();
+  setupMenu();
+  setupActions();
+  setupActiveMenu();
 })();
