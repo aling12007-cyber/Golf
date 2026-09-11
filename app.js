@@ -236,7 +236,7 @@
         .sticky-shell{height:calc(var(--bar) + var(--chapter-strip));overflow:visible}
         .mobile-chapter-strip{display:flex;height:var(--chapter-strip);align-items:center;gap:52px;padding:0 28px;background:#fff;border-top:1px solid #efeeeb;border-bottom:1px solid #e8e7e3;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch}
         .mobile-chapter-strip::-webkit-scrollbar{display:none}
-        .mobile-chapter-strip a{flex:0 0 auto;text-decoration:none;color:#d3d1ce;font-family:var(--serif);font-size:27px;font-weight:700;line-height:1;letter-spacing:.01em;transition:color .18s ease}
+        .mobile-chapter-strip a{flex:0 0 auto;text-decoration:none;color:#d3d1ce;font-family:var(--serif);font-size:20.25px;font-weight:700;line-height:1;letter-spacing:.01em;transition:color .18s ease}
         .mobile-chapter-strip a.active{color:#33312e}
         .cover-image{margin-top:calc(var(--bar) + var(--chapter-strip))}
         .chapter{scroll-margin-top:calc(var(--bar) + var(--chapter-strip))}
@@ -244,7 +244,7 @@
       @media(max-width:560px){
         :root{--chapter-strip:64px}
         .mobile-chapter-strip{gap:44px;padding:0 24px}
-        .mobile-chapter-strip a{font-size:25px}
+        .mobile-chapter-strip a{font-size:18.75px}
       }
     `;
     document.head.appendChild(style);
