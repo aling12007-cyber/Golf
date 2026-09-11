@@ -125,3 +125,12 @@ main{margin:0;padding:0}
   .cover-image,.chapter-hero{position:relative;height:50vh;min-height:0}
   .cover-breath,.editorial{padding-top:0;border-left:0}
 }
+
+@media(max-width:900px){
+  :root{--chapter-strip:40px!important}
+  .mobile-chapter-strip{height:40px!important;min-height:40px!important}
+}
+@media(max-width:560px){
+  :root{--chapter-strip:36px!important}
+  .mobile-chapter-strip{height:36px!important;min-height:36px!important}
+}
