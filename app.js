@@ -45,8 +45,7 @@
     kagoshima:[
       'https://ibusukigolf.iwasakihotels.com/en/img/slider/1.jpg',
       'https://ibusukigolf.iwasakihotels.com/en/img/slider/2.jpg'
-    ],
-    aesthetic:[LOCAL.aesthetic,'assets/aesthetic-lantern.jpg']
+    ]
   };
 
   const ARTICLE_IMAGES={
@@ -59,9 +58,7 @@
       'https://www.princehotels.co.jp/image/2024_4_top200_golf_1.jpg',
       'https://www.princehotels.co.jp/image/2024_4_top200_golf_2.jpg'
     ],
-    'Gozensui Golf Club':[
-      'https://www.gozensui-gc.com/course/hole/images/screen.jpg'
-    ],
+    'Gozensui Golf Club':['https://www.gozensui-gc.com/course/hole/images/screen.jpg'],
     'A-Brand Golf Club':[
       'https://japan.golfsavers.com/assets/image/A-Brand-golf-Club-fairways.jpg',
       'https://japan.golfsavers.com/assets/image/A-Brand-golf-Club-tee-box.jpg'
@@ -70,9 +67,7 @@
       'https://image.gora.golf.rakuten.co.jp/img/golf/40002/photo1.jpg',
       'https://d2sniq1199ov7.cloudfront.net/golf/courses/images/userphotos/izumi-international-golf-club_1.jpg'
     ],
-    'Kiyosumi Golf Club':[
-      'https://image.gora.golf.rakuten.co.jp/img/golf/110020/photo1.jpg'
-    ],
+    'Kiyosumi Golf Club':['https://image.gora.golf.rakuten.co.jp/img/golf/110020/photo1.jpg'],
     'Kawana Hotel Golf Course':[
       'https://www.princehotels.co.jp/golf/kawana/fuji/course/images_static/pct-hole02-03.jpg',
       'https://www.princehotels.co.jp/golf/kawana/fuji/course/images_static/pct-hole03-03.jpg'
@@ -85,19 +80,13 @@
       'https://fuji-classic.com/_next/image?dpl=dpl_GJV7G1cCFfot22sMr52xC9XF1A2T&q=75&url=%2Fimages%2FDIYA61LfWZB4nyhczQ6SPeVXVQ.jpg&w=3840',
       'https://fuji-classic.com/_next/image?dpl=dpl_GJV7G1cCFfot22sMr52xC9XF1A2T&q=75&url=%2Fimages%2FBY4cFoz2N30pCvhBGd3cmGpS7Wc.jpg&w=3840'
     ],
-    'Narusawa Golf Club':[
-      'https://zuien.net/wp-content/themes/zuien/src/images/narusawa/coursegide/out/course_out_001.jpg'
-    ],
+    'Narusawa Golf Club':['https://zuien.net/wp-content/themes/zuien/src/images/narusawa/coursegide/out/course_out_001.jpg'],
     'Seta Golf Course':[
       'https://www.princehotels.co.jp/golf/seta/north/course/images_static/pct-hole06-01.jpg',
       'https://www.princehotels.co.jp/golf/seta/north/course/images_static/pct-hole18-01.jpg'
     ],
-    'Ibaraki Country Club':[
-      'https://ibarakicc.com/img/course/img_modal_course_east_02.jpg'
-    ],
-    'Beppu Golf Club':[
-      'https://pgm-images.s3-ap-northeast-1.amazonaws.com/img/main_visual/133/r64e5c0d9.jpg'
-    ],
+    'Ibaraki Country Club':['https://ibarakicc.com/img/course/img_modal_course_east_02.jpg'],
+    'Beppu Golf Club':['https://pgm-images.s3-ap-northeast-1.amazonaws.com/img/main_visual/133/r64e5c0d9.jpg'],
     'Phoenix Country Club':[
       'https://www.miyazaki-city.tourism.or.jp/storage/tourism_attractions/10013/responsive_images/zyJrTV8cIORSJVYihD1BVq1s01VUS2PLVbi50Amg__1680_1120.jpg',
       'https://www.miyazaki-city.tourism.or.jp/storage/tourism_attractions/10013/responsive_images/9bPi0556gr7Dt4imKofuR10veIxMiY7xHd0LPYON__1679_1119.jpg'
@@ -118,7 +107,6 @@
 
     function failAll(){
       img.classList.add('is-unavailable');
-      img.removeAttribute('src');
       if(typeof onExhausted==='function')onExhausted(img);
     }
 
@@ -133,7 +121,6 @@
       img.setAttribute('src',src);
       if(img.complete&&img.naturalWidth>0)img.onload();
     }
-
     next();
   }
 
@@ -154,8 +141,8 @@
       if(!b)return;
       if(b.dataset.a==='print')return window.print();
       if(b.dataset.a==='contact')return location.href='mailto:?subject='+encodeURIComponent(document.title)+'&body='+encodeURIComponent(location.href);
-      if(navigator.share){try{await navigator.share({title:document.title,url:location.href});}catch(_){} }
-      else if(navigator.clipboard){try{await navigator.clipboard.writeText(location.href);}catch(_){} }
+      if(navigator.share){try{await navigator.share({title:document.title,url:location.href});}catch(_){}}
+      else if(navigator.clipboard){try{await navigator.clipboard.writeText(location.href);}catch(_){}}
     });
   }
 
@@ -221,16 +208,12 @@
   }
 
   function prepareEditorial(){
-    $$('.chapter.region,.chapter.aesthetic').forEach(section=>{
+    $$('.chapter.region').forEach(section=>{
       const editorial=$('.editorial',section);
       if(!editorial)return;
-
-      $$('.aesthetic-stack',editorial).forEach(n=>n.remove());
       const intro=$('.chapter-intro',editorial);
       if(intro)intro.remove();
-
       $$('.story',editorial).forEach(article=>ensurePhotoAfter(article,section.id));
-
       if($('.editorial-inner',editorial))return;
       const wrap=document.createElement('div');
       wrap.className='editorial-inner';
@@ -239,21 +222,43 @@
     });
   }
 
-  function addAestheticGallery(){
-    const root=$('#aesthetic .aesthetic-editorial');
-    if(!root||$('.aesthetic-upload-gallery',root))return;
+  function fixAesthetic(){
+    const section=$('#aesthetic');
+    if(!section)return;
 
-    const gallery=document.createElement('div');
-    gallery.className='aesthetic-upload-gallery';
-    const items=[
-      ['assets/aesthetic-user-bunker.jpg','Bunker care'],
-      ['assets/aesthetic-user-meal.jpg','Clubhouse dining'],
-      ['assets/aesthetic-user-onsen.jpg','Restorative bath'],
-      ['assets/aesthetic-user-lantern.jpg','Garden detail']
+    const hero=$('.chapter-hero img',section);
+    if(hero){
+      hero.src=LOCAL.aesthetic;
+      hero.classList.add('is-ready');
+      hero.style.position='absolute';
+      hero.style.inset='0';
+      hero.style.width='100%';
+      hero.style.height='100%';
+      hero.style.objectFit='cover';
+      hero.style.objectPosition='center';
+      hero.style.opacity='1';
+    }
+
+    const root=$('.aesthetic-editorial',section);
+    if(!root)return;
+
+    const assets=[
+      ['assets/aesthetic-bunker.jpg','Bunker care'],
+      ['assets/aesthetic-meal.jpg','Clubhouse dining'],
+      ['assets/aesthetic-bath.jpg','Restorative bath'],
+      ['assets/aesthetic-lantern.jpg','Garden detail']
     ];
 
+    let gallery=$('.aesthetic-upload-gallery',root);
+    if(!gallery){
+      gallery=document.createElement('div');
+      gallery.className='aesthetic-upload-gallery';
+      root.appendChild(gallery);
+    }
+    gallery.innerHTML='';
     gallery.style.cssText='width:min(480px,calc(100% - 76px));margin:34px auto 0;display:grid;grid-template-columns:1fr;gap:34px;padding-bottom:96px;';
-    items.forEach(([src,caption])=>{
+
+    assets.forEach(([src,caption])=>{
       const fig=document.createElement('figure');
       fig.style.cssText='margin:0;background:#f7f7f4;border:1px solid #eceae5;overflow:hidden;';
       const img=document.createElement('img');
@@ -261,6 +266,7 @@
       img.alt=caption;
       img.loading='lazy';
       img.decoding='async';
+      img.className='is-ready';
       img.style.cssText='display:block;width:100%;aspect-ratio:4/3;height:auto;object-fit:cover;object-position:center;opacity:1;';
       const cap=document.createElement('figcaption');
       cap.textContent=caption;
@@ -268,18 +274,13 @@
       fig.append(img,cap);
       gallery.appendChild(fig);
     });
-
-    const inner=$('.editorial-inner',root);
-    (inner||root).appendChild(gallery);
   }
 
   function images(){
     loadChain($('#cover .cover-image img'),[LOCAL.cover],{includeCurrent:false});
 
-    $$('.chapter.region,.chapter.aesthetic').forEach(section=>{
-      loadChain($('.chapter-hero img',section),HERO[section.id]||[],{
-        includeCurrent:false
-      });
+    $$('.chapter.region').forEach(section=>{
+      loadChain($('.chapter-hero img',section),HERO[section.id]||[],{includeCurrent:false});
     });
 
     $$('.story-photo img').forEach(img=>{
@@ -310,22 +311,18 @@
     document.addEventListener('click',e=>{
       if(panel.classList.contains('open')&&!panel.contains(e.target)&&!btn.contains(e.target))close();
     });
-    panel.addEventListener('click',e=>{
-      if(e.target.closest('a'))close();
-    });
+    panel.addEventListener('click',e=>{if(e.target.closest('a'))close();});
   }
 
   function active(){
     const sections=$$('.chapter');
     const links=$$('a[href^="#"]');
     let current='cover';
-
     function sync(){
       const y=scrollY+innerHeight*.42;
       sections.forEach(s=>{if(s.offsetTop<=y)current=s.id;});
       links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+current));
     }
-
     addEventListener('scroll',sync,{passive:true});
     addEventListener('resize',sync);
     sync();
@@ -335,7 +332,7 @@
   rebuildMenu();
   buildCover();
   prepareEditorial();
-  addAestheticGallery();
+  fixAesthetic();
   images();
   menu();
   active();
