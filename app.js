@@ -7,7 +7,7 @@
 
   const LOCAL={
     cover:'assets/cover-fuji.jpg',
-    aesthetic:'assets/aesthetic-lantern.jpg'
+    aesthetic:'assets/aesthetic-bunker.jpg'
   };
 
   const HERO={
@@ -46,7 +46,7 @@
       'https://ibusukigolf.iwasakihotels.com/en/img/slider/1.jpg',
       'https://ibusukigolf.iwasakihotels.com/en/img/slider/2.jpg'
     ],
-    aesthetic:[LOCAL.aesthetic]
+    aesthetic:[LOCAL.aesthetic,'assets/aesthetic-lantern.jpg']
   };
 
   const ARTICLE_IMAGES={
@@ -154,8 +154,8 @@
       if(!b)return;
       if(b.dataset.a==='print')return window.print();
       if(b.dataset.a==='contact')return location.href='mailto:?subject='+encodeURIComponent(document.title)+'&body='+encodeURIComponent(location.href);
-      if(navigator.share){try{await navigator.share({title:document.title,url:location.href});}catch(_){}}
-      else if(navigator.clipboard){try{await navigator.clipboard.writeText(location.href);}catch(_){}}
+      if(navigator.share){try{await navigator.share({title:document.title,url:location.href});}catch(_){} }
+      else if(navigator.clipboard){try{await navigator.clipboard.writeText(location.href);}catch(_){} }
     });
   }
 
