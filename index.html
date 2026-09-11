@@ -7,6 +7,40 @@
 <title>Japan Golf Itineraries</title>
 <meta name="description" content="Curated golf itineraries across Japan."/>
 <link rel="stylesheet" href="style.css?v=20260911u"/>
+<style>
+.overview-copy .editorial-inner{padding-top:42px;padding-bottom:92px}
+.overview-heading{text-align:center;margin:0 0 4px;color:#45413d;font:750 27px/1.08 var(--sans);letter-spacing:-.02em}
+.overview-rule{height:1px;background:#d8d6d0;margin:8px 0 5px}
+.overview-subtitle{text-align:center;margin:0 0 12px;color:#55514c;font:italic 18px/1.35 var(--serif)}
+.overview-map{margin:0 0 32px;border:1px solid #e0dfdb;background:#dedede;overflow:hidden}
+.overview-map svg{display:block;width:100%;height:auto}
+.overview-list{list-style:none;margin:0 auto;padding:0;width:min(360px,100%)}
+.overview-list li{margin:0 0 8px;color:#45413d;font:400 15px/1.3 var(--serif)}
+.overview-list strong{display:inline-block;width:28px;text-align:right;margin-right:5px;font-weight:700;color:#302e2b}
+.overview-map .sea{fill:#d7d7d7}
+.overview-map .land{fill:#f5f5f2;stroke:#c6c6c1;stroke-width:1.4}
+.overview-map .coast-detail{fill:none;stroke:#c9c9c5;stroke-width:1}
+.overview-map .pin{fill:#ef762f;stroke:#fff;stroke-width:3}
+.overview-map .pin-core{fill:#fff}
+.overview-map .pill{fill:#fff;stroke:#cfcec9;stroke-width:1}
+.overview-map text{font-family:var(--sans);fill:#484540}
+.overview-map .region-label{font-size:12px;fill:#9a9892;font-style:italic;letter-spacing:.04em}
+.overview-map .pin-label{font-size:12px;font-weight:650}
+#Overview .chapter-hero img{object-position:center center}
+@media(max-width:900px){
+  .overview-copy .editorial-inner{padding-top:58px;padding-bottom:76px}
+  .overview-heading{font-size:26px}
+  .overview-subtitle{font-size:17px;margin-bottom:16px}
+}
+@media(max-width:560px){
+  .overview-copy .editorial-inner{padding-top:48px;padding-bottom:66px}
+  .overview-heading{font-size:25px}
+  .overview-subtitle{font-size:16px}
+  .overview-map{width:100vw;margin-left:calc(50% - 50vw);border-left:0;border-right:0}
+  .overview-list{width:100%}
+  .overview-list li{font-size:15px}
+}
+</style>
 </head>
 <body>
 <div class="sticky-shell">
@@ -36,6 +70,77 @@
       <h2>A Guide to Japan’s Signature Golf Destinations</h2>
       <div class="intro-rule"></div>
       <p>From Hokkaido’s open fairways to Mount Fuji panoramas, classic Pacific coast courses and the refined clubs of Kansai, this guide brings together distinctive golf experiences across Japan.</p>
+    </div>
+  </div>
+</section>
+
+<section class="chapter overview" id="Overview">
+  <div class="chapter-hero">
+    <img alt="Japan golf destinations overview" decoding="async" loading="lazy" src="assets/niseko-village.jpg"/>
+    <div class="hero-overlay"><em>— Japan's Golf Destinations</em><h2>FEATURED GOLF<br/>DESTINATIONS</h2></div>
+  </div>
+  <div class="editorial overview-copy">
+    <div class="editorial-inner">
+      <h3 class="overview-heading">Geographic Overview</h3>
+      <div class="overview-rule"></div>
+      <p class="overview-subtitle">an overview of the locations in this guide</p>
+      <figure class="overview-map" aria-label="Schematic map of golf destinations across Japan">
+        <svg viewBox="0 0 520 360" role="img" aria-labelledby="overview-map-title">
+          <title id="overview-map-title">Golf destinations across Japan</title>
+          <rect class="sea" x="0" y="0" width="520" height="360"/>
+          <path class="land" d="M364 37l38-13 42 8 17 22-8 25-30 16-42-2-30-18-4-22z"/>
+          <path class="land" d="M388 101l-13 17-5 22-20 16-6 25-20 14-5 20-22 11-8 21-24 11-12 20-24 8-13 19-28 8-18-8 6-17 23-11 12-20 23-8 12-21 25-10 7-20 23-15 7-22 21-15 7-24 20-18z"/>
+          <path class="land" d="M210 277l23-4 18 8-8 14-27 3-15-8z"/>
+          <path class="land" d="M157 281l24-9 17 12-4 23-15 17-23-3-15-17z"/>
+          <path class="coast-detail" d="M390 121c-19 10-24 23-28 39m-34 39c-8 18-19 26-35 33m-45 35c-16 7-26 14-34 26"/>
+          <text class="region-label" x="68" y="145">Sea of Japan</text>
+          <text class="region-label" x="404" y="112">Hokkaido</text>
+          <text class="region-label" x="346" y="192">Tohoku</text>
+          <text class="region-label" x="293" y="248">Tokyo</text>
+          <text class="region-label" x="204" y="326">Kyushu</text>
+
+          <circle class="pin" cx="404" cy="72" r="12"/><circle class="pin-core" cx="404" cy="72" r="3.5"/>
+          <rect class="pill" x="419" y="59" rx="10" ry="10" width="42" height="22"/><text class="pin-label" x="440" y="74" text-anchor="middle">1–4</text>
+
+          <circle class="pin" cx="357" cy="157" r="12"/><circle class="pin-core" cx="357" cy="157" r="3.5"/>
+          <rect class="pill" x="372" y="146" rx="10" ry="10" width="28" height="22"/><text class="pin-label" x="386" y="161" text-anchor="middle">5</text>
+
+          <circle class="pin" cx="323" cy="202" r="12"/><circle class="pin-core" cx="323" cy="202" r="3.5"/>
+          <rect class="pill" x="338" y="191" rx="10" ry="10" width="28" height="22"/><text class="pin-label" x="352" y="206" text-anchor="middle">6</text>
+
+          <circle class="pin" cx="298" cy="225" r="12"/><circle class="pin-core" cx="298" cy="225" r="3.5"/>
+          <rect class="pill" x="313" y="214" rx="10" ry="10" width="48" height="22"/><text class="pin-label" x="337" y="229" text-anchor="middle">7–10</text>
+
+          <circle class="pin" cx="255" cy="252" r="12"/><circle class="pin-core" cx="255" cy="252" r="3.5"/>
+          <rect class="pill" x="270" y="241" rx="10" ry="10" width="50" height="22"/><text class="pin-label" x="295" y="256" text-anchor="middle">11–12</text>
+
+          <circle class="pin" cx="186" cy="285" r="12"/><circle class="pin-core" cx="186" cy="285" r="3.5"/>
+          <rect class="pill" x="201" y="274" rx="10" ry="10" width="32" height="22"/><text class="pin-label" x="217" y="289" text-anchor="middle">13</text>
+
+          <circle class="pin" cx="172" cy="307" r="12"/><circle class="pin-core" cx="172" cy="307" r="3.5"/>
+          <rect class="pill" x="187" y="296" rx="10" ry="10" width="32" height="22"/><text class="pin-label" x="203" y="311" text-anchor="middle">14</text>
+
+          <circle class="pin" cx="158" cy="331" r="12"/><circle class="pin-core" cx="158" cy="331" r="3.5"/>
+          <rect class="pill" x="173" y="320" rx="10" ry="10" width="32" height="22"/><text class="pin-label" x="189" y="335" text-anchor="middle">15</text>
+        </svg>
+      </figure>
+      <ol class="overview-list">
+        <li><strong>1)</strong>Niseko Village Golf Course, Hokkaido</li>
+        <li><strong>2)</strong>Furano Golf Course, Hokkaido</li>
+        <li><strong>3)</strong>Gozensui Golf Club, Hokkaido</li>
+        <li><strong>4)</strong>A-Brand Golf Club, Hokkaido</li>
+        <li><strong>5)</strong>Izumi Kokusai Golf Course, Miyagi</li>
+        <li><strong>6)</strong>Kiyosumi Golf Club, Saitama</li>
+        <li><strong>7)</strong>Kawana Hotel Golf Course, Shizuoka</li>
+        <li><strong>8)</strong>Daifuji Golf Course, Shizuoka</li>
+        <li><strong>9)</strong>Fuji Classic, Yamanashi</li>
+        <li><strong>10)</strong>Narusawa Golf Club, Yamanashi</li>
+        <li><strong>11)</strong>Seta Golf Course, Kyoto</li>
+        <li><strong>12)</strong>Ibaraki Country Club, Osaka</li>
+        <li><strong>13)</strong>Beppu Golf Club, Oita</li>
+        <li><strong>14)</strong>Phoenix Country Club, Miyazaki</li>
+        <li><strong>15)</strong>Ibusuki Golf Course, Kagoshima</li>
+      </ol>
     </div>
   </div>
 </section>
